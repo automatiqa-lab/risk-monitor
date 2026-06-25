@@ -1,0 +1,57 @@
+# Operations Risk Navigator - Python dependencies
+
+# Model-agnostic LLM gateway (Anthropic, OpenAI, Ollama, ... via one call)
+litellm>=1.40.0
+
+# HTTP client for fetching pages and RSS
+httpx>=0.27.0
+
+# HTML parsing
+beautifulsoup4>=4.12.0
+lxml>=5.2.0
+
+# RSS/Atom feed parsing
+feedparser>=6.0.11
+
+# Headless browser for JS-heavy shipping line sites + PDF generation
+playwright>=1.44.0
+
+# Word document parsing (for manual input via .docx)
+python-docx>=1.1.0
+
+# PDF text extraction (for EML attachment parsing)
+PyMuPDF>=1.24.0
+
+# Excel parsing (for carrier advisory XLSX attachments)
+openpyxl>=3.1.0
+
+# YAML config
+PyYAML>=6.0.1
+
+# Jinja2 templating for newsletter rendering
+Jinja2>=3.1.4
+
+# PowerPoint generation for PPTX agents (oil, diesel, strikes)
+python-pptx>=1.0.0
+
+# Web service (FastAPI + Uvicorn)
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+python-multipart>=0.0.9
+
+# Scheduling
+APScheduler>=3.10.4
+
+# Environment variable loading
+python-dotenv>=1.0.1
+
+# Date handling
+python-dateutil>=2.9.0
+
+# Email delivery (Phase 2)
+# sendgrid>=6.11.0
+
+# Testing
+pytest>=8.2.0
+pytest-asyncio>=0.23.7
+responses>=0.25.3      # Mock HTTP responses in tests

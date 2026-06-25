@@ -1,0 +1,107 @@
+# Data sources for Operations Risk Navigator
+#
+# Shipping lines are scraped directly via Playwright (when --no-scrape is NOT set).
+# All other news is collected via targeted Google News searches - no feed URLs needed.
+
+shipping_lines:
+  # ── Top 10 global container carriers ──────────────────────────────────────
+
+  msc:
+    name: "MSC"
+    news_url: "https://www.msc.com/en/news"
+    advisory_url: "https://www.msc.com/en/news"
+    type: scrape
+
+  maersk:
+    name: "Maersk"
+    news_url: "https://www.maersk.com/news"
+    advisory_url: "https://www.maersk.com/news/service-updates"
+    type: scrape
+
+  cma_cgm:
+    name: "CMA CGM"
+    news_url: "https://www.cma-cgm.com/news"
+    advisory_url: "https://www.cma-cgm.com/news"
+    type: scrape
+
+  hapag_lloyd:
+    name: "Hapag-Lloyd"
+    news_url: "https://www.hapag-lloyd.com/en/news-insights/news.html"
+    advisory_url: "https://www.hapag-lloyd.com/en/news-insights/customer-advisories.html"
+    type: scrape
+
+  cosco:
+    name: "COSCO Shipping"
+    news_url: "https://lines.coscoshipping.com/home/Notices"
+    advisory_url: "https://lines.coscoshipping.com/home/Notices"
+    type: scrape
+
+  evergreen:
+    name: "Evergreen Line"
+    news_url: "https://www.evergreen-line.com/static/jsp/news_list.jsp"
+    advisory_url: "https://www.evergreen-line.com/static/jsp/news_list.jsp"
+    type: scrape
+
+  one_line:
+    name: "Ocean Network Express (ONE)"
+    news_url: "https://www.one-line.com/en/news"
+    advisory_url: "https://www.one-line.com/en/news"
+    type: scrape
+
+  yang_ming:
+    name: "Yang Ming"
+    news_url: "https://www.yangming.com/e-service/news/index.aspx"
+    advisory_url: "https://www.yangming.com/e-service/news/index.aspx"
+    type: scrape
+
+  hmm:
+    name: "HMM (Hyundai Merchant Marine)"
+    news_url: "https://www.hmm21.com/cms/company/engn/introduce/news/index.jsp"
+    advisory_url: "https://www.hmm21.com/cms/company/engn/introduce/news/index.jsp"
+    type: scrape
+
+  zim:
+    name: "ZIM"
+    news_url: "https://www.zim.com/news"
+    advisory_url: "https://www.zim.com/news"
+    type: scrape
+
+  # ── Regional / niche carriers ─────────────────────────────────────────────
+
+  wan_hai:
+    name: "Wan Hai Lines"
+    news_url: "https://www.wanhai.com/views/Main.xhtml"
+    advisory_url: "https://www.wanhai.com/views/Main.xhtml"
+    type: scrape
+
+  pil:
+    name: "Pacific International Lines (PIL)"
+    news_url: "https://www.pilship.com/en-news/"
+    advisory_url: "https://www.pilship.com/en-news/"
+    type: scrape
+
+  tslines:
+    name: "TS Lines"
+    news_url: "https://www.tslines.com/en/news"
+    advisory_url: "https://www.tslines.com/en/news"
+    type: scrape
+
+  emirates_shipping:
+    name: "Emirates Shipping Line"
+    news_url: "https://www.emiratesline.com/news/"
+    advisory_url: "https://www.emiratesline.com/news/"
+    type: scrape
+
+  # ── Africa-focused carriers (key for East Africa lanes) ───────────────────
+
+  messina:
+    name: "Messina Line"
+    news_url: "https://www.messinaline.it/en/news"
+    advisory_url: "https://www.messinaline.it/en/news"
+    type: scrape
+
+  safmarine:
+    name: "Safmarine"
+    news_url: "https://www.safmarine.com/news"
+    advisory_url: "https://www.safmarine.com/news"
+    type: scrape

@@ -1,0 +1,71 @@
+# Region definitions for Strikes & Disruptions agent
+# Uses the same key trade lanes as the freight agent
+
+regions:
+  east_africa:
+    display_name: "East Africa"
+    countries: ["Kenya", "Tanzania", "Uganda", "Rwanda", "Ethiopia", "Djibouti"]
+    ports: ["Mombasa", "Dar es Salaam", "Djibouti", "Lamu"]
+    keywords:
+      - "Kenya dock workers"
+      - "Mombasa port strike"
+      - "Tanzania port authority"
+      - "Djibouti customs"
+
+  central_america:
+    display_name: "Central America"
+    countries: ["Panama", "Honduras", "Guatemala", "Nicaragua", "Costa Rica"]
+    ports: ["Colón", "Puerto Cortes", "Puerto Limón", "Corinto", "Balboa"]
+    keywords:
+      - "Panama Canal workers"
+      - "Central America logistics"
+      - "Honduras customs"
+
+  brazil:
+    display_name: "Brazil"
+    countries: ["Brazil"]
+    ports: ["Santos", "Paranaguá", "Itajaí", "Rio de Janeiro"]
+    keywords:
+      - "Brazil trucker strike"
+      - "Santos port"
+      - "Brazilian customs"
+      - "ANTAQ"
+
+  north_europe:
+    display_name: "North Europe"
+    countries: ["Germany", "Netherlands", "Belgium", "France", "United Kingdom"]
+    ports: ["Rotterdam", "Hamburg", "Antwerp", "Bremerhaven", "Le Havre", "Felixstowe"]
+    keywords:
+      - "ver.di strike"
+      - "CGT strike"
+      - "European dock workers"
+      - "Eurogate"
+      - "HHLA"
+
+  vietnam:
+    display_name: "Vietnam"
+    countries: ["Vietnam"]
+    ports: ["Ho Chi Minh City", "Hai Phong", "Cat Lai", "Cai Mep"]
+    keywords:
+      - "Vietnam port"
+      - "Vietnamese logistics"
+      - "HCMC port"
+
+container_availability:
+  shortage_keywords:
+    - "port shutdown"
+    - "terminal closure"
+    - "strike action"
+    - "blockade"
+    - "complete halt"
+  surplus_keywords:
+    - "strike ended"
+    - "back to work"
+    - "agreement reached"
+    - "operations resumed"
+  general_keywords:
+    - "work slowdown"
+    - "overtime ban"
+    - "union negotiation"
+    - "dispute"
+    - "threatened strike"

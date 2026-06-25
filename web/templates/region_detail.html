@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}{{ region_label }} - Trade Lane{% endblock %}
+
+{% block extra_css %}
+  .signal-card { background: var(--vf-card); border: 1px solid var(--vf-border); border-radius: 8px; padding: 14px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); border-left: 4px solid var(--vf-tan); }
+  .signal-card.critical { border-left-color: var(--red); background: var(--red-bg); }
+  .signal-card.high { border-left-color: var(--amber); background: var(--amber-bg); }
+  .signal-card.positive { border-left-color: var(--green); background: var(--green-bg); }
+  .signal-card .s-title { font-size: 13px; font-weight: 600; color: var(--vf-text); margin-bottom: 4px; }
+  .signal-card .s-summary { font-size: 12px; color: var(--vf-text); line-height: 1.5; margin-bottom: 6px; }
+  .signal-card .s-meta { font-size: 10px; color: var(--vf-text-muted); display: flex; gap: 8px; flex-wrap: wrap; }
+  .signal-card .s-source { font-weight: 600; background: var(--vf-cream); padding: 1px 6px; border-radius: 3px; }
+  .signal-card .s-module { font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .signal-card .s-signal { font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .signal-card .s-url a { color: var(--vf-green-light); font-weight: 600; }
+
+  .mod-tab { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; background: var(--vf-card); border: 1px solid var(--vf-border); color: var(--vf-text-muted); cursor: pointer; transition: all 0.15s; text-decoration: none; }
+  .mod-tab:hover, .mod-tab.active { background: var(--vf-green); border-color: var(--vf-green); color: #fff; text-decoration: none; }
+  .mod-tab .cnt { background: rgba(0,0,0,0.08); padding: 1px 6px; border-radius: 10px; font-size: 10px; }
+  .mod-tab.active .cnt { background: rgba(255,255,255,0.2); }
+
+  .dim-card { background: var(--vf-card); border: 1px solid var(--vf-border); border-radius: 8px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); text-align: center; }
+  .dim-card .d-icon { font-size: 20px; margin-bottom: 6px; }
+  .dim-card .d-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--vf-text-muted); margin-bottom: 4px; }
+  .dim-card .d-count { font-size: 24px; font-weight: 800; }
+  .dim-card .d-status { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; margin-top: 4px; }
+{% endblock %}
+
+{% block content %}
+<div class="breadcrumb"><a href="/">Dashboard</a> / <strong>{{ region_label }}</strong></div>
+
+<div class="page-header">
+  <div class="icon">{{ region_icon }}</div>
+  <div>
+    <h1>{{ region_label }}</h1>
+    <div class="subtitle">{{ subtitle }}</div>
+  </div>
+  {% if overall_status == 'CRITICAL' %}{% set pcolor = 'red' %}{% elif overall_status == 'HIGH' %}{% set pcolor = 'amber' %}{% elif overall_status == 'WATCH' %}{% set pcolor = 'olive' %}{% else %}{% set pcolor = 'green' %}{% endif %}
+  <div class="status-pill" style="background:var(--{{ pcolor }});color:#fff;">{{ overall_status }}</div>
+</div>
+
+<!-- Risk dimension cards (one per module) -->
+<div style="display:grid;grid-template-columns:repeat(7, 1fr);gap:10px;margin-bottom:20px;">
+  {% for d in dimensions %}
+  {% if d.count > 3 %}{% set dc = 'red' %}{% elif d.count > 0 %}{% set dc = 'amber' %}{% else %}{% set dc = 'green' %}{% endif %}
+  <a href="/{{ d.module }}" style="text-decoration:none;color:inherit;">
+  <div class="dim-card" style="border-top:3px solid var(--{{ dc }});">
+    <div class="d-icon">{{ d.icon }}</div>
+    <div class="d-label">{{ d.label }}</div>
+    <div class="d-count c-{{ dc }}">{{ d.count }}</div>
+    <div class="d-status c-{{ dc }}">{% if d.count > 3 %}CRITICAL{% elif d.count > 0 %}ACTIVE{% else %}CLEAR{% endif %}</div>
+  </div>
+  </a>
+  {% endfor %}
+</div>
+
+<!-- Module filter tabs -->
+<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;">
+  <a href="/region/{{ region_key }}" class="mod-tab {% if not filter_module %}active{% endif %}">All <span class="cnt">{{ articles|length }}</span></a>
+  {% for d in dimensions %}
+  {% if d.count > 0 %}
+  <a href="/region/{{ region_key }}?module={{ d.module }}" class="mod-tab {% if filter_module == d.module %}active{% endif %}">{{ d.label }} <span class="cnt">{{ d.count }}</span></a>
+  {% endif %}
+  {% endfor %}
+</div>
+
+<!-- Signal feed -->
+<div class="section">
+  <div class="section-header">
+    <h3>{{ region_label }} - Intelligence Feed</h3>
+    <div class="badge">{{ articles|length }} signals</div>
+  </div>
+  <div class="section-body">
+    {% for a in articles %}
+    {% if a.signal == 'shortage' %}{% set sclass = 'critical' %}{% elif a.signal == 'general' %}{% set sclass = 'high' %}{% elif a.signal == 'surplus' %}{% set sclass = 'positive' %}{% else %}{% set sclass = '' %}{% endif %}
+    <div class="signal-card {{ sclass }}">
+      <div class="s-title">{{ a.title }}</div>
+      {% if a.summary %}<div class="s-summary">{{ a.summary[:300] }}</div>{% endif %}
+      <div class="s-meta">
+        {% if a.source %}<span class="s-source">{{ a.source }}</span>{% endif %}
+        <span class="s-module" style="color:var(--vf-green);">{{ a.module|upper }}</span>
+        {% if a.signal %}<span class="s-signal c-{% if a.signal == 'shortage' %}red{% elif a.signal == 'surplus' %}green{% else %}amber{% endif %}">{{ a.signal }}</span>{% endif %}
+        {% if a.published_at %}<span>{{ a.published_at[:10] }}</span>{% endif %}
+        {% if a.url %}<span class="s-url"><a href="{{ a.url }}" target="_blank">Source →</a></span>{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+    {% if not articles %}
+    <div style="padding:20px;text-align:center;color:var(--vf-text-muted);">No signals detected for this region.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

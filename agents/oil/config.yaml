@@ -1,0 +1,44 @@
+# Global Oil News agent - configuration
+# Covers: VLSFO, marine bunker fuel, Brent crude, bunkering hub disruptions
+
+agent:
+  max_articles: 20
+  lookback_days: 7
+
+# Google News queries for oil/marine fuel intelligence
+queries:
+  - query: 'VLSFO price (Singapore OR Fujairah OR Rotterdam) shipping bunker'
+    label: "VLSFO Prices"
+  - query: '"marine fuel" OR "bunker fuel" (shortage OR crisis OR surcharge OR spike)'
+    label: "Marine Fuel Supply"
+  - query: '"Brent crude" (shipping OR freight OR surcharge OR disruption)'
+    label: "Brent Crude Impact"
+  - query: '(Singapore OR Fujairah OR Rotterdam) bunkering (inventory OR stock OR supply)'
+    label: "Bunkering Hub Inventory"
+  - query: '"fuel surcharge" OR "EFS" OR "emergency fuel" shipping carrier'
+    label: "Carrier Fuel Surcharges"
+  - query: '"Strait of Hormuz" OR "Red Sea" oil tanker (disruption OR blockade OR attack)'
+    label: "Chokepoint Disruptions"
+
+# Scrape targets for direct data collection (Playwright)
+scrape_sources:
+  - name: "Ship & Bunker"
+    url: "https://shipandbunker.com/prices"
+    type: scrape
+  - name: "EU Oil Bulletin"
+    url: "https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en"
+    type: scrape
+
+# PPTX output structure (7-slide deck)
+slides:
+  - title_dashboard      # Title + KPI cards (VLSFO price, Brent, hub status)
+  - data_validation      # Gemini/AI claims vs verified sources
+  - price_analysis       # Technical price charts + signals
+  - inventory_assessment # Singapore + Fujairah stock levels
+  - crisis_timeline      # Catalyst events + shipping operational impact
+  - recovery_scenarios   # Base / Stress / Shock forward outlook
+  - actions              # Implications & recommended actions
+
+output:
+  directory: "./output"
+  filename_pattern: "oil-risk-report-{date}.pptx"

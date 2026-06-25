@@ -1,0 +1,54 @@
+# General settings for Operations Risk Navigator
+
+agent:
+  # How many articles per region to include in the newsletter
+  max_articles_per_region: 5
+  # Max articles from shipping lines section
+  max_articles_per_carrier: 3
+  # Max articles in container availability watch
+  max_container_articles: 6
+  # Lookback window in days for news freshness
+  lookback_days: 7
+  # Minimum article word count to consider (filter very short items)
+  min_article_words: 50
+
+llm:
+  # Any LiteLLM model string. Swap providers by changing this one line:
+  #   claude-sonnet-4-6   (Anthropic, needs ANTHROPIC_API_KEY)
+  #   gpt-4o-mini         (OpenAI, needs OPENAI_API_KEY)
+  #   ollama/llama3.1     (local, set LLM_API_BASE=http://localhost:11434)
+  model: "claude-sonnet-4-6"
+  # For a local or self-hosted endpoint, set LLM_API_BASE in the environment
+  # (e.g. http://localhost:11434 for Ollama).
+  summary_max_tokens: 200       # Per-article summary length cap
+  newsletter_max_tokens: 4000   # Full newsletter composition cap
+  temperature: 0.3
+
+output:
+  directory: "./output"
+  filename_pattern: "sc-risk-report-{date}.html"
+  also_save_markdown: true
+
+scraping:
+  request_timeout_seconds: 30
+  retry_attempts: 3
+  retry_delay_seconds: 5
+  # Respectful crawl delay between requests (seconds)
+  crawl_delay_seconds: 2
+  user_agent: "OpsRiskNavigator/1.0 (internal research tool)"
+
+email:
+  # Phase 2 - leave empty for now
+  enabled: false
+  smtp_host: ""
+  smtp_port: 587
+  from_address: ""
+  subject_template: "Operations Risk Navigator - {date}"
+  recipients: []
+
+cache:
+  enabled: true
+  # SQLite file for seen-article deduplication
+  db_path: "./output/seen_articles.db"
+  # Expire seen-article records after N days
+  expire_days: 30

@@ -1,0 +1,101 @@
+# Geopolitical & Sanctions agent - configuration
+# Covers: trade wars, sanctions, tariffs, embargoes, diplomatic incidents,
+#          canal restrictions, inspection protocols
+
+agent:
+  max_articles: 25
+  lookback_days: 7
+
+# Google News queries
+queries:
+  # Sanctions & embargoes
+  - query: '(sanctions OR embargo OR "trade ban") (shipping OR freight OR logistics OR container)'
+    label: "Sanctions & Embargoes"
+  - query: '(OFAC OR "EU sanctions" OR "UN sanctions") (vessel OR shipping OR carrier OR trade)'
+    label: "Sanctions Designations"
+
+  # Tariffs & trade wars
+  - query: '(tariff OR "trade war" OR "import duty" OR "anti-dumping") (shipping OR freight OR supply chain)'
+    label: "Tariffs & Trade Wars"
+  - query: '"Section 301" OR "CBAM" OR "carbon border" shipping freight impact'
+    label: "Trade Policy - US & EU"
+
+  # Diplomatic incidents affecting trade
+  - query: '(China OR Russia OR Iran) (shipping OR trade OR port) (ban OR restriction OR retaliation OR inspection)'
+    label: "Geopolitical Trade Restrictions"
+  - query: '(Panama Canal OR "Suez Canal" OR "Strait of Hormuz") (restriction OR closure OR dispute OR sovereignty)'
+    label: "Canal & Chokepoint Sovereignty"
+
+  # Inspection & compliance
+  - query: '"customs inspection" OR "inspection protocol" OR "port state control" (new OR change OR tightened)'
+    label: "Customs & Inspection Changes"
+  - query: '(IMO OR "International Maritime") regulation (new OR 2026 OR compliance) shipping'
+    label: "IMO Regulatory Changes"
+
+  # Regional tensions affecting key lanes
+  - query: '(China Panama) OR (China Taiwan) OR (Russia Ukraine) shipping freight impact'
+    label: "Regional Tensions - Trade Impact"
+  - query: '"flag state" OR "vessel detention" OR "blacklist" shipping sanctions'
+    label: "Vessel Compliance & Detention"
+
+# Scrape targets
+scrape_sources:
+  - name: "OFAC"
+    url: "https://ofac.treasury.gov/recent-actions"
+    type: scrape
+    notes: "US Office of Foreign Assets Control - sanctions updates"
+  - name: "EU Sanctions Map"
+    url: "https://www.sanctionsmap.eu/"
+    type: scrape
+    notes: "EU consolidated sanctions list"
+  - name: "Panama Canal Authority"
+    url: "https://www.pancanal.com/en/news/"
+    type: scrape
+    notes: "Canal transit restrictions and booking changes"
+  - name: "WTO Trade Monitoring"
+    url: "https://www.wto.org/english/news_e/news_e.htm"
+    type: scrape
+    notes: "New trade restrictions, anti-dumping measures"
+
+# Risk classification
+severity:
+  critical:
+    keywords:
+      - "full embargo"
+      - "trade ban"
+      - "canal closure"
+      - "vessel seizure"
+      - "port blockade"
+      - "war declaration"
+      - "military action"
+  high:
+    keywords:
+      - "new sanctions"
+      - "tariff increase"
+      - "inspection halt"
+      - "vessel detention"
+      - "flag state ban"
+      - "transit restriction"
+      - "export ban"
+  monitoring:
+    keywords:
+      - "trade talks"
+      - "negotiation"
+      - "proposed tariff"
+      - "under review"
+      - "compliance update"
+      - "regulation change"
+      - "diplomatic tension"
+
+# PPTX output structure (6-slide deck)
+slides:
+  - title_dashboard      # Title + active geopolitical risk KPIs
+  - sanctions_tracker    # New/changed sanctions affecting shipping
+  - tariff_trade_war     # Active tariffs and trade restrictions by lane
+  - chokepoint_status    # Panama Canal, Suez, Hormuz - sovereignty & access
+  - compliance_changes   # New IMO/customs/inspection requirements
+  - actions              # Recommended mitigations
+
+output:
+  directory: "./output"
+  filename_pattern: "geopolitical-risk-report-{date}.pptx"

@@ -1,0 +1,76 @@
+# Region definitions for Port Congestion Index agent
+
+regions:
+  east_africa:
+    display_name: "East Africa"
+    countries: ["Kenya", "Tanzania", "Uganda", "Djibouti", "Ethiopia"]
+    ports: ["Mombasa", "Dar es Salaam", "Djibouti", "Lamu"]
+    keywords:
+      - "Mombasa congestion"
+      - "KPA"
+      - "Kenya Ports Authority"
+      - "Dar es Salaam port"
+      - "East Africa shipping"
+
+  central_america:
+    display_name: "Central America"
+    countries: ["Panama", "Honduras", "Guatemala", "Nicaragua", "Costa Rica"]
+    ports: ["Colón", "Puerto Cortes", "Corinto", "Balboa", "Puerto Limón"]
+    keywords:
+      - "Panama Canal transit"
+      - "Colón port"
+      - "Puerto Cortes capacity"
+      - "Central America port"
+
+  brazil:
+    display_name: "Brazil"
+    countries: ["Brazil"]
+    ports: ["Santos", "Paranaguá", "Itajaí", "Rio Grande"]
+    keywords:
+      - "Santos congestion"
+      - "Paranaguá port"
+      - "Brazil port throughput"
+      - "ANTAQ"
+
+  north_europe:
+    display_name: "North Europe"
+    countries: ["Germany", "Netherlands", "Belgium"]
+    ports: ["Rotterdam", "Hamburg", "Antwerp", "Bremerhaven"]
+    keywords:
+      - "Rotterdam congestion"
+      - "Hamburg port"
+      - "Antwerp Gateway"
+      - "Eurogate"
+      - "HHLA"
+      - "ECT"
+
+  vietnam:
+    display_name: "Vietnam"
+    countries: ["Vietnam"]
+    ports: ["Ho Chi Minh City", "Hai Phong", "Cat Lai", "Cai Mep"]
+    keywords:
+      - "HCMC port"
+      - "Cat Lai terminal"
+      - "Hai Phong congestion"
+      - "Vietnam shipping"
+
+container_availability:
+  shortage_keywords:
+    - "severe congestion"
+    - "port shutdown"
+    - "terminal closure"
+    - "yard full"
+    - "vessels at anchor"
+    - "skipping port"
+  surplus_keywords:
+    - "congestion easing"
+    - "throughput record"
+    - "wait times reduced"
+    - "operations normalized"
+  general_keywords:
+    - "port congestion"
+    - "vessel waiting"
+    - "dwell time"
+    - "blank sailing"
+    - "schedule reliability"
+    - "cargo rolling"

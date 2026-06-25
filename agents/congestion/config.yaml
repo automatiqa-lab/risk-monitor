@@ -1,0 +1,137 @@
+# Port Congestion Index agent - configuration
+# Covers: vessel waiting times, berth utilisation, dwell times,
+#          container availability by port, schedule reliability
+
+agent:
+  max_articles: 25
+  lookback_days: 7
+
+# Monitored ports (aligned with key trade lanes)
+ports:
+  - key: mombasa
+    name: "Mombasa"
+    country: Kenya
+    region: east_africa
+  - key: dar_es_salaam
+    name: "Dar es Salaam"
+    country: Tanzania
+    region: east_africa
+  - key: djibouti
+    name: "Djibouti"
+    country: Djibouti
+    region: east_africa
+  - key: colon
+    name: "Colón"
+    country: Panama
+    region: central_america
+  - key: puerto_cortes
+    name: "Puerto Cortes"
+    country: Honduras
+    region: central_america
+  - key: santos
+    name: "Santos"
+    country: Brazil
+    region: brazil
+  - key: paranagua
+    name: "Paranaguá"
+    country: Brazil
+    region: brazil
+  - key: rotterdam
+    name: "Rotterdam"
+    country: Netherlands
+    region: north_europe
+  - key: hamburg
+    name: "Hamburg"
+    country: Germany
+    region: north_europe
+  - key: antwerp
+    name: "Antwerp"
+    country: Belgium
+    region: north_europe
+  - key: hcmc
+    name: "Ho Chi Minh City"
+    country: Vietnam
+    region: vietnam
+  - key: hai_phong
+    name: "Hai Phong"
+    country: Vietnam
+    region: vietnam
+
+# Google News queries
+queries:
+  - query: '"port congestion" OR "vessel waiting time" OR "berth utilization" (Mombasa OR Santos OR Rotterdam OR Hamburg)'
+    label: "Port Congestion - Key Ports"
+  - query: '"container dwell time" OR "yard utilization" OR "terminal congestion" shipping'
+    label: "Terminal & Yard Congestion"
+  - query: '"blank sailing" OR "schedule reliability" OR "vessel delay" container shipping'
+    label: "Schedule Reliability"
+  - query: '"equipment availability" OR "container shortage" OR "empty repositioning" port'
+    label: "Equipment Availability"
+  - query: '(Mombasa OR "Dar es Salaam" OR Djibouti) (congestion OR delay OR waiting) ship'
+    label: "East Africa Port Status"
+  - query: '(Colón OR "Puerto Cortes" OR Corinto) (congestion OR delay OR capacity) shipping'
+    label: "Central America Port Status"
+  - query: '(Rotterdam OR Hamburg OR Antwerp) (congestion OR delay OR throughput) container'
+    label: "North Europe Port Status"
+  - query: '("Ho Chi Minh" OR "Hai Phong" OR "Cat Lai") (congestion OR delay OR rolling) shipping'
+    label: "Vietnam Port Status"
+
+# Scrape targets - port authorities and congestion trackers
+scrape_sources:
+  - name: "MarineTraffic"
+    url: "https://www.marinetraffic.com/"
+    type: scrape
+    notes: "Vessel density at key ports, congestion indicators"
+  - name: "Port of Rotterdam"
+    url: "https://www.portofrotterdam.com/en/news-and-press-releases"
+    type: scrape
+  - name: "Hamburg Port Authority"
+    url: "https://www.hafen-hamburg.de/en/news/"
+    type: scrape
+  - name: "Kenya Ports Authority"
+    url: "https://www.kpa.co.ke/Pages/News.aspx"
+    type: scrape
+  - name: "Santos Port Authority"
+    url: "https://www.portodesantos.com.br/en/news/"
+    type: scrape
+
+# Congestion severity levels
+severity:
+  critical:
+    keywords:
+      - "14-day wait"
+      - "port shutdown"
+      - "terminal closure"
+      - "force majeure"
+      - "skipping port"
+      - "100% utilization"
+      - "yard full"
+  high:
+    keywords:
+      - "severe congestion"
+      - "5-day delay"
+      - "10-day delay"
+      - "vessel queue"
+      - "blank sailing"
+      - "cargo rolling"
+      - "berth shortage"
+  monitoring:
+    keywords:
+      - "minor delay"
+      - "moderate congestion"
+      - "increased dwell"
+      - "capacity pressure"
+      - "vessel diversion"
+
+# PPTX output structure (6-slide deck)
+slides:
+  - title_dashboard      # Title + congestion KPIs (worst ports, avg wait times)
+  - port_status_matrix   # All monitored ports: status, wait time, utilisation
+  - regional_detail      # Deep dive per region with article evidence
+  - schedule_reliability # Blank sailings, carrier schedule performance
+  - equipment_tracker    # Container availability by port (20ft/40ft stock)
+  - actions              # Recommended mitigations
+
+output:
+  directory: "./output"
+  filename_pattern: "congestion-report-{date}.pptx"

@@ -1,0 +1,88 @@
+# Region definitions for Weather & Natural Disasters agent
+# Aligned with key trade lanes + coffee origins
+
+regions:
+  east_africa:
+    display_name: "East Africa"
+    countries: ["Kenya", "Tanzania", "Uganda", "Rwanda", "Ethiopia", "Djibouti", "Somalia"]
+    ports: ["Mombasa", "Dar es Salaam", "Djibouti", "Lamu"]
+    keywords:
+      - "Indian Ocean cyclone"
+      - "East African drought"
+      - "Mombasa weather"
+      - "Lake Victoria flooding"
+
+  central_america:
+    display_name: "Central America & Caribbean"
+    countries: ["Panama", "Honduras", "Guatemala", "Nicaragua", "Costa Rica", "Colombia"]
+    ports: ["Colón", "Puerto Cortes", "Puerto Limón", "Corinto", "Balboa", "Buenaventura", "Cartagena"]
+    keywords:
+      - "hurricane season"
+      - "Caribbean storm"
+      - "Panama Canal water level"
+      - "Central America flooding"
+      - "La Niña"
+      - "El Niño"
+
+  brazil:
+    display_name: "Brazil"
+    countries: ["Brazil"]
+    ports: ["Santos", "Paranaguá", "Itajaí", "Rio de Janeiro"]
+    keywords:
+      - "Brazil drought"
+      - "Minas Gerais frost"
+      - "Espirito Santo weather"
+      - "cerrado dry season"
+      - "Santos port weather"
+      - "coffee harvest weather"
+
+  north_europe:
+    display_name: "North Europe"
+    countries: ["Germany", "Netherlands", "Belgium", "France", "United Kingdom"]
+    ports: ["Rotterdam", "Hamburg", "Antwerp", "Bremerhaven", "Le Havre", "Felixstowe"]
+    keywords:
+      - "North Sea storm"
+      - "Rhine water level"
+      - "European flood"
+      - "Elbe flood"
+      - "winter storm Europe"
+
+  vietnam:
+    display_name: "Vietnam & Southeast Asia"
+    countries: ["Vietnam", "Philippines", "Indonesia", "Thailand"]
+    ports: ["Ho Chi Minh City", "Hai Phong", "Cat Lai", "Cai Mep", "Manila", "Jakarta"]
+    keywords:
+      - "typhoon Vietnam"
+      - "South China Sea storm"
+      - "Mekong flooding"
+      - "Vietnam monsoon"
+      - "Philippines typhoon"
+
+  panama_canal:
+    display_name: "Panama Canal"
+    countries: ["Panama"]
+    ports: ["Balboa", "Colón", "Miraflores"]
+    keywords:
+      - "Panama Canal draft"
+      - "Gatun Lake level"
+      - "canal transit restriction"
+      - "Panama drought"
+
+container_availability:
+  shortage_keywords:
+    - "port closure"
+    - "terminal shutdown"
+    - "vessel stranded"
+    - "force majeure"
+    - "evacuation order"
+  surplus_keywords:
+    - "storm passed"
+    - "port reopened"
+    - "operations resumed"
+    - "all clear"
+  general_keywords:
+    - "weather warning"
+    - "storm approaching"
+    - "vessel delayed"
+    - "draft restriction"
+    - "frost alert"

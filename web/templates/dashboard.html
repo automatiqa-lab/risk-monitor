@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Operations Risk Navigator</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --vf-green: #1C4B27;
+    --vf-green-light: #2E6B3E;
+    --vf-gold: #8B6914;
+    --vf-gold-bright: #EAAA00;
+    --vf-burg: #6F263D;
+    --vf-tan: #D5C9B4;
+    --vf-cream: #F5F0E8;
+    --vf-warm: #EEE8DC;
+    --vf-bg: #FAFAF8;
+    --vf-card: #FFFFFF;
+    --vf-card-hover: #F9F7F3;
+    --vf-border: #E5DDD0;
+    --vf-text: #1a1a1a;
+    --vf-text-muted: #7a7568;
+    --red: #C0392B;
+    --red-bg: #FFF5F5;
+    --amber: #D4870A;
+    --amber-bg: #FFFBEB;
+    --green: #1C7A3C;
+    --green-bg: #F0FFF4;
+    --olive: #5B8A1E;
+    --olive-bg: #F8FFF0;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: var(--vf-bg); color: var(--vf-text); line-height: 1.5; }
+  a { color: var(--vf-green-light); text-decoration: none; }
+  a:hover { text-decoration: underline; color: var(--vf-green); }
+
+  /* ── Top Nav ──────────────────────────────────────────────────── */
+  .topnav { background: var(--vf-green); border-bottom: 4px solid var(--vf-gold-bright); padding: 0 24px; display: flex; align-items: center; height: 56px; position: sticky; top: 0; z-index: 100; }
+  .topnav .brand { font-size: 15px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--vf-gold-bright); margin-right: 32px; }
+  .topnav .brand span { color: #fff; font-weight: 400; letter-spacing: 1px; }
+  .topnav nav { display: flex; gap: 4px; }
+  .topnav nav a { padding: 6px 14px; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; color: rgba(255,255,255,0.7); border-radius: 4px; transition: all 0.15s; }
+  .topnav nav a:hover, .topnav nav a.active { background: rgba(255,255,255,0.15); color: #fff; text-decoration: none; }
+  .topnav .meta { margin-left: auto; font-size: 11px; color: rgba(255,255,255,0.55); display: flex; align-items: center; gap: 16px; }
+  .topnav .meta .live-dot { width: 8px; height: 8px; background: #4ADE80; border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+  .container { max-width: 1440px; margin: 0 auto; padding: 20px 24px; }
+
+  /* ── Risk Banner ──────────────────────────────────────────────── */
+  .risk-banner { display: grid; grid-template-columns: 260px 1fr; gap: 16px; margin-bottom: 20px; }
+  .risk-gauge { background: var(--vf-card); border: 1px solid var(--vf-border); border-radius: 8px; padding: 24px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .risk-gauge .label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--vf-text-muted); margin-bottom: 8px; }
+  .risk-gauge .score { font-size: 60px; font-weight: 800; color: var(--amber); line-height: 1; }
+  .risk-gauge .score-label { font-size: 13px; font-weight: 700; color: var(--amber); margin-top: 4px; }
+  .risk-gauge .bar { height: 6px; background: var(--vf-tan); border-radius: 3px; margin-top: 16px; overflow: hidden; }
+  .risk-gauge .bar-fill { height: 100%; width: 72%; background: linear-gradient(90deg, var(--green) 0%, var(--amber) 60%, var(--red) 100%); border-radius: 3px; }
+  .risk-gauge .bar-labels { display: flex; justify-content: space-between; font-size: 9px; color: var(--vf-text-muted); margin-top: 4px; }
+
+  /* ── Module Cards ─────────────────────────────────────────────── */
+  .module-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+  .module-card { background: var(--vf-card); border: 1px solid var(--vf-border); border-radius: 8px; padding: 14px; cursor: pointer; transition: all 0.15s; position: relative; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .module-card:hover { background: var(--vf-card-hover); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .module-card .stripe { position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .module-card .m-icon { font-size: 20px; margin-bottom: 8px; }
+  .module-card .m-name { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: var(--vf-text); margin-bottom: 4px; }
+  .module-card .m-count { font-size: 24px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+  .module-card .m-sub { font-size: 10px; color: var(--vf-text-muted); }
+  .module-card .status-badge { position: absolute; top: 12px; right: 12px; font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; }
+
+  /* ── Main Grid ────────────────────────────────────────────────── */
+  .main-grid { display: grid; grid-template-columns: 1fr 380px; gap: 20px; margin-top: 20px; }
+
+  /* ── Section Card ─────────────────────────────────────────────── */
+  .section { background: var(--vf-card); border: 1px solid var(--vf-border); border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .section-header { padding: 14px 18px; border-bottom: 1px solid var(--vf-border); display: flex; align-items: center; gap: 10px; background: var(--vf-cream); }
+  .section-header h3 { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--vf-green); }
+  .section-header .badge { margin-left: auto; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 3px; background: var(--vf-tan); color: var(--vf-text-muted); }
+  .section-body { padding: 16px 18px; }
+
+  /* ── Region Heatmap ───────────────────────────────────────────── */
+  .region-row { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--vf-border); }
+  .region-row:last-child { border-bottom: none; }
+  .region-name { width: 140px; font-size: 12px; font-weight: 600; color: var(--vf-text); }
+  .region-bars { flex: 1; display: flex; gap: 4px; }
+  .region-bar { height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #fff; letter-spacing: 0.5px; min-width: 30px; cursor: pointer; transition: opacity 0.15s; }
+  .region-bar:hover { opacity: 0.85; }
+  .region-bar.neutral { background: var(--vf-tan); color: var(--vf-text-muted); }
+  .region-status { width: 80px; text-align: right; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+
+  /* ── Alert Feed ───────────────────────────────────────────────── */
+  .alert-item { padding: 12px 0; border-bottom: 1px solid var(--vf-border); display: flex; gap: 10px; align-items: flex-start; }
+  .alert-item:last-child { border-bottom: none; }
+  .alert-severity { width: 6px; min-height: 40px; border-radius: 3px; flex-shrink: 0; margin-top: 2px; }
+  .alert-content { flex: 1; }
+  .alert-title { font-size: 12px; font-weight: 600; color: var(--vf-text); margin-bottom: 3px; }
+  .alert-meta { font-size: 10px; color: var(--vf-text-muted); display: flex; gap: 8px; align-items: center; }
+  .alert-tag { font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 3px; background: var(--vf-cream); color: var(--vf-text-muted); border: 1px solid var(--vf-border); }
+
+  /* ── Carrier Strip ────────────────────────────────────────────── */
+  .carrier-strip { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-top: 20px; }
+  .carrier-chip { background: var(--vf-card); border: 1px solid var(--vf-border); border-radius: 6px; padding: 10px; text-align: center; font-size: 11px; font-weight: 700; color: var(--vf-text); cursor: pointer; transition: all 0.15s; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .carrier-chip:hover { background: var(--vf-card-hover); }
+  .carrier-chip .carrier-status { font-size: 9px; font-weight: 600; margin-top: 4px; letter-spacing: 0.5px; }
+  .carrier-chip .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+
+  /* ── KPI cards ────────────────────────────────────────────────── */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; }
+  .kpi-card { background: var(--vf-card); border: 1px solid var(--vf-border); border-radius: 8px; padding: 16px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .kpi-card .kpi-label { font-size: 10px; color: var(--vf-text-muted); letter-spacing: 1px; text-transform: uppercase; }
+  .kpi-card .kpi-val { font-size: 28px; font-weight: 800; line-height: 1.2; }
+  .kpi-card .kpi-delta { font-size: 11px; font-weight: 600; }
+  .sparkline { display: flex; align-items: flex-end; gap: 2px; height: 24px; justify-content: center; margin-top: 8px; }
+  .sparkline .bar { width: 5px; border-radius: 2px; }
+
+  /* ── Report downloads ─────────────────────────────────────────── */
+  .dl-item { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 6px; background: var(--vf-cream); border: 1px solid var(--vf-border); margin-bottom: 6px; }
+  .dl-item:hover { background: var(--vf-warm); }
+  .dl-icon { font-size: 18px; }
+  .dl-name { font-size: 12px; font-weight: 600; color: var(--vf-text); }
+  .dl-sub { font-size: 10px; color: var(--vf-text-muted); }
+
+  /* ── Colours ──────────────────────────────────────────────────── */
+  .c-red { color: var(--red); } .c-amber { color: var(--amber); } .c-green { color: var(--green); } .c-olive { color: var(--olive); }
+  .bg-red { background: var(--red); } .bg-amber { background: var(--amber); } .bg-green { background: var(--green); } .bg-olive { background: var(--olive); } .bg-burg { background: var(--vf-burg); }
+
+  /* ── Footer ───────────────────────────────────────────────────── */
+  .footer { margin-top: 32px; padding: 16px 0; border-top: 2px solid var(--vf-border); font-size: 10px; color: var(--vf-text-muted); display: flex; justify-content: space-between; }
+
+  @media (max-width: 1200px) {
+    .module-row { grid-template-columns: repeat(4, 1fr); }
+    .main-grid { grid-template-columns: 1fr; }
+    .carrier-strip { grid-template-columns: repeat(4, 1fr); }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ Top Navigation ══════════════════════════════════════════════ -->
+<div class="topnav">
+  <div class="brand">Operations Risk Navigator</div>
+  <nav>
+    <a href="#" class="active">Dashboard</a>
+    <a href="#">Freight</a>
+    <a href="#">Oil &amp; Fuel</a>
+    <a href="#">Diesel</a>
+    <a href="#">Disruptions</a>
+    <a href="#">Weather</a>
+    <a href="#">Geopolitical</a>
+    <a href="/congestion">Congestion</a>
+    <a href="#">Reports</a>
+  </nav>
+  <div class="meta">
+    <div class="live-dot"></div>
+    <span>LIVE · Last update: {{ last_update }}</span>
+    <span id="auto-refresh">Auto-refresh: 5m</span>
+    <a href="/logout" style="color:rgba(255,255,255,0.5);font-size:11px;text-decoration:none;margin-left:8px;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Logout</a>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ══ Risk Score + Module Cards ════════════════════════════════════ -->
+<div class="risk-banner">
+  <div class="risk-gauge">
+    <div class="label">Composite Risk Score</div>
+    <div class="score c-amber">72</div>
+    <div class="score-label">ELEVATED</div>
+    <div class="bar"><div class="bar-fill"></div></div>
+    <div class="bar-labels"><span>Low</span><span>Moderate</span><span>High</span><span>Critical</span></div>
+  </div>
+  <div class="module-row">
+    {% for m in modules %}
+    {% if m.status == 'CRITICAL' %}{% set sc = 'red' %}{% elif m.status == 'HIGH' %}{% set sc = 'amber' %}{% elif m.status == 'WATCH' %}{% set sc = 'olive' %}{% else %}{% set sc = 'green' %}{% endif %}
+    {% if m.module == 'freight' %}{% set mi = '🚢' %}{% set ml = 'Freight' %}{% elif m.module == 'oil' %}{% set mi = '🛢️' %}{% set ml = 'Oil & Fuel' %}{% elif m.module == 'diesel' %}{% set mi = '⛽' %}{% set ml = 'Diesel' %}{% elif m.module == 'strikes' %}{% set mi = '⚠️' %}{% set ml = 'Disruptions' %}{% elif m.module == 'weather' %}{% set mi = '🌊' %}{% set ml = 'Weather' %}{% elif m.module == 'geopolitical' %}{% set mi = '🌐' %}{% set ml = 'Geopolitical' %}{% elif m.module == 'congestion' %}{% set mi = '🏗️' %}{% set ml = 'Congestion' %}{% else %}{% set mi = '📊' %}{% set ml = m.module %}{% endif %}
+    <a href="/{{ m.module }}" style="text-decoration:none;color:inherit;">
+    <div class="module-card">
+      <div class="stripe bg-{{ sc }}"></div>
+      <div class="m-icon">{{ mi }}</div>
+      <div class="m-name">{{ ml }}</div>
+      <div class="m-count c-{{ sc }}">{{ m.signal_count }}</div>
+      <div class="m-sub">alerts · {{ m.critical_count }} critical</div>
+      <div class="status-badge" style="background:var(--{{ sc }});color:#fff;">{{ m.status }}</div>
+    </div>
+    </a>
+    {% endfor %}
+    {% if not modules %}
+    {% for info in [('🚢','Freight'),('🛢️','Oil & Fuel'),('⛽','Diesel'),('⚠️','Disruptions'),('🌊','Weather'),('🌐','Geopolitical'),('🏗️','Congestion')] %}
+    <div class="module-card">
+      <div class="stripe bg-green"></div>
+      <div class="m-icon">{{ info[0] }}</div>
+      <div class="m-name">{{ info[1] }}</div>
+      <div class="m-count c-green">-</div>
+      <div class="m-sub">awaiting first scrape</div>
+      <div class="status-badge" style="background:var(--green);color:#fff;">PENDING</div>
+    </div>
+    {% endfor %}
+    {% endif %}
+  </div>
+</div>
+
+<!-- ══ Main Content Grid ═══════════════════════════════════════════ -->
+<div class="main-grid">
+  <div>
+    <!-- Region Risk Heatmap -->
+    <div class="section">
+      <div class="section-header">
+        <h3>Trade Lane Risk Heatmap</h3>
+        <div class="badge">5 regions · 7 risk dimensions</div>
+      </div>
+      <div class="section-body">
+        <div style="display:flex;align-items:center;padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid var(--vf-border);">
+          <div style="width:140px;font-size:9px;color:var(--vf-text-muted);font-weight:600;letter-spacing:1px;">REGION</div>
+          <div style="flex:1;display:flex;gap:4px;">
+            <div style="flex:1;font-size:8px;text-align:center;color:var(--vf-text-muted);letter-spacing:0.5px;">FRT</div>
+            <div style="flex:1;font-size:8px;text-align:center;color:var(--vf-text-muted);letter-spacing:0.5px;">OIL</div>
+            <div style="flex:1;font-size:8px;text-align:center;color:var(--vf-text-muted);letter-spacing:0.5px;">DSL</div>
+            <div style="flex:1;font-size:8px;text-align:center;color:var(--vf-text-muted);letter-spacing:0.5px;">DIS</div>
+            <div style="flex:1;font-size:8px;text-align:center;color:var(--vf-text-muted);letter-spacing:0.5px;">WTH</div>
+            <div style="flex:1;font-size:8px;text-align:center;color:var(--vf-text-muted);letter-spacing:0.5px;">GEO</div>
+            <div style="flex:1;font-size:8px;text-align:center;color:var(--vf-text-muted);letter-spacing:0.5px;">CNG</div>
+          </div>
+          <div style="width:80px;"></div>
+        </div>
+        {% for rk, rlabel, bars, rstatus, rcolor in [
+          ('east_africa', 'East Africa', [('freight','red','3','CRT'),('oil','amber','2','HI'),('diesel','','1','-'),('strikes','olive','1','W'),('weather','green','1','OK'),('geopolitical','amber','2','HI'),('congestion','red','3','CRT')], 'CRITICAL', 'red'),
+          ('central_america', 'Central America', [('freight','amber','2','HI'),('oil','olive','1','W'),('diesel','','1','-'),('strikes','green','1','OK'),('weather','green','1','OK'),('geopolitical','amber','2','HI'),('congestion','amber','2','HI')], 'HIGH', 'amber'),
+          ('brazil', 'Brazil', [('freight','green','1','OK'),('oil','olive','1','W'),('diesel','','1','-'),('strikes','green','1','OK'),('weather','green','1','OK'),('geopolitical','olive','1','W'),('congestion','green','1','OK')], 'STABLE', 'green'),
+          ('north_europe', 'North Europe', [('freight','green','1','OK'),('oil','amber','2','HI'),('diesel','amber','2','HI'),('strikes','green','1','OK'),('weather','green','1','OK'),('geopolitical','amber','2','HI'),('congestion','green','1','OK')], 'HIGH', 'amber'),
+          ('vietnam', 'Vietnam', [('freight','olive','1','W'),('oil','olive','1','W'),('diesel','','1','-'),('strikes','green','1','OK'),('weather','olive','1','W'),('geopolitical','olive','1','W'),('congestion','olive','1','W')], 'WATCH', 'olive')
+        ] %}
+        <div class="region-row">
+          <a href="/region/{{ rk }}" style="width:140px;font-size:12px;font-weight:600;color:var(--vf-text);text-decoration:none;" onmouseover="this.style.color='var(--vf-green-light)'" onmouseout="this.style.color='var(--vf-text)'">{{ rlabel }}</a>
+          <div class="region-bars">
+            {% for mod, bcolor, bflex, blabel in bars %}
+            <a href="/region/{{ rk }}?module={{ mod }}" style="flex:{{ bflex }};text-decoration:none;" title="{{ rlabel }} - {{ mod }}">
+              <div class="region-bar {% if bcolor %}bg-{{ bcolor }}{% else %}neutral{% endif %}" style="width:100%;">{{ blabel }}</div>
+            </a>
+            {% endfor %}
+          </div>
+          <a href="/region/{{ rk }}" style="width:80px;text-align:right;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-decoration:none;color:var(--{{ rcolor }});">{{ rstatus }}</a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Carrier Status Strip -->
+    <div class="carrier-strip">
+      {% for c in carriers %}
+      <a href="/carrier/{{ c.key }}" style="text-decoration:none;color:inherit;">
+      <div class="carrier-chip">{{ c.name }}<div class="carrier-status c-{{ c.color }}"><span class="dot bg-{{ c.color }}"></span>{{ c.status }} ({{ c.count }})</div></div>
+      </a>
+      {% endfor %}
+      {% if not carriers %}
+      {% for cn in ['MSC','Maersk','CMA CGM','Hapag-Lloyd','ONE','Evergreen','COSCO','WEC Lines'] %}
+      <div class="carrier-chip">{{ cn }}<div class="carrier-status" style="color:var(--vf-text-muted);"><span class="dot" style="background:var(--vf-tan);"></span>PENDING</div></div>
+      {% endfor %}
+      {% endif %}
+    </div>
+
+    <!-- KPI Row -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">VLSFO Singapore</div>
+        <div class="kpi-val c-red">$1,100</div>
+        <div class="kpi-delta c-red">▲ +106% vs Jan</div>
+        <div class="sparkline"><div class="bar bg-green" style="height:8px;"></div><div class="bar bg-green" style="height:10px;"></div><div class="bar bg-olive" style="height:9px;"></div><div class="bar bg-amber" style="height:14px;"></div><div class="bar bg-red" style="height:20px;"></div><div class="bar bg-red" style="height:24px;"></div></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Diesel Germany</div>
+        <div class="kpi-val c-amber">€2,165</div>
+        <div class="kpi-delta c-amber">▲ +25.7% (4wk)</div>
+        <div class="sparkline"><div class="bar bg-olive" style="height:12px;"></div><div class="bar bg-amber" style="height:14px;"></div><div class="bar bg-amber" style="height:20px;"></div><div class="bar bg-amber" style="height:22px;"></div></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Mombasa Wait</div>
+        <div class="kpi-val c-red">14d</div>
+        <div class="kpi-delta c-red">vessels at anchor</div>
+        <div class="sparkline"><div class="bar bg-olive" style="height:6px;"></div><div class="bar bg-olive" style="height:8px;"></div><div class="bar bg-amber" style="height:12px;"></div><div class="bar bg-red" style="height:24px;"></div></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Hormuz Status</div>
+        <div class="kpi-val c-red">CLOSED</div>
+        <div class="kpi-delta c-red">since 28 Feb</div>
+        <div class="sparkline"><div class="bar bg-green" style="height:20px;"></div><div class="bar bg-green" style="height:20px;"></div><div class="bar bg-red" style="height:4px;"></div><div class="bar bg-red" style="height:4px;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Live Alert Feed + Downloads -->
+  <div>
+    <div class="section">
+      <div class="section-header">
+        <h3>Live Alert Feed</h3>
+        <div class="badge">{{ alerts|length }} signals</div>
+      </div>
+      <div class="section-body" style="max-height:480px;overflow-y:auto;padding:8px 14px;">
+        {% for a in alerts %}
+        {% if a.severity == 'critical' %}{% set asc = 'red' %}{% set abg = 'var(--red-bg)' %}{% elif a.severity == 'high' %}{% set asc = 'amber' %}{% set abg = 'var(--amber-bg)' %}{% elif a.severity == 'positive' %}{% set asc = 'green' %}{% set abg = 'var(--green-bg)' %}{% else %}{% set asc = 'olive' %}{% set abg = 'transparent' %}{% endif %}
+        {% set first_region = a.region.split(',')[0] if a.region else '' %}
+        <a href="{% if first_region %}/region/{{ first_region }}?module={{ a.module }}{% else %}/{{ a.module }}{% endif %}" style="text-decoration:none;color:inherit;display:block;">
+        <div class="alert-item" style="{% if a.severity == 'critical' %}background:{{ abg }};border-radius:6px;padding:10px 10px;margin:0 -6px 4px;{% endif %}border-bottom:1px solid var(--vf-border);transition:background 0.15s;" onmouseover="this.style.background='var(--vf-card-hover)'" onmouseout="this.style.background='{% if a.severity == 'critical' %}{{ abg }}{% else %}transparent{% endif %}'">
+          <div class="alert-severity bg-{{ asc }}" style="{% if a.severity == 'critical' %}width:6px;{% endif %}"></div>
+          <div class="alert-content" style="flex:1;">
+            <div class="alert-title" style="{% if a.severity == 'critical' %}color:var(--red);{% endif %}">{% if a.severity == 'critical' %}🔴 {% endif %}{{ a.title }}</div>
+            <div class="alert-meta">
+              <a href="/{{ a.module }}" class="alert-tag" style="text-decoration:none;" onclick="event.stopPropagation();">{{ a.module|upper }}</a>
+              {% if first_region %}<a href="/region/{{ first_region }}" class="alert-tag" style="text-decoration:none;" onclick="event.stopPropagation();">{{ first_region.replace('_',' ')|upper }}</a>{% endif %}
+              <span style="font-size:10px;color:var(--vf-text-muted);">{{ a.created_at[:16] }}</span>
+            </div>
+          </div>
+          <div style="flex-shrink:0;font-size:16px;color:var(--vf-tan);margin-left:4px;">›</div>
+        </div>
+        </a>
+        {% endfor %}
+        {% if not alerts %}
+        <div style="padding:20px;text-align:center;color:var(--vf-text-muted);font-size:12px;">
+          No alerts yet - awaiting first scraper run
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="section" style="margin-top:20px;">
+      <div class="section-header"><h3>Latest Reports</h3></div>
+      <div class="section-body">
+        <a href="#" class="dl-item"><span class="dl-icon">📊</span><div><div class="dl-name">Freight Weekly - Wk 12</div><div class="dl-sub">HTML · MD · PDF · 17 Mar 2026</div></div></a>
+        <a href="#" class="dl-item"><span class="dl-icon">🛢️</span><div><div class="dl-name">Oil &amp; Fuel Risk Report - Wk 12</div><div class="dl-sub">PPTX · 20 Mar 2026</div></div></a>
+        <a href="#" class="dl-item"><span class="dl-icon">⛽</span><div><div class="dl-name">Diesel Bulletin - Wk 12</div><div class="dl-sub">PPTX · 18 Mar 2026</div></div></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Insight Charts ═══════════════════════════════════════════════ -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px;">
+
+  <!-- Port Congestion Analysis (signal mentions) -->
+  <div class="section">
+    <div class="section-header"><h3>Port Congestion - Signal Mentions (7 days)</h3><div class="badge">{{ port_data|length }} ports</div></div>
+    <div class="section-body" style="height:320px;position:relative;">
+      <canvas id="portChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Vessel Counts (from VesselFinder / MarineTraffic) -->
+  <div class="section">
+    <div class="section-header"><h3>Vessels In Port / At Anchor (Live)</h3><div class="badge">{{ port_vessel_data|length }} ports</div></div>
+    <div class="section-body" style="height:320px;position:relative;">
+      {% if port_vessel_data %}
+      <canvas id="vesselChart"></canvas>
+      {% else %}
+      <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--vf-text-muted);font-size:12px;">
+        Vessel data populating - next scrape cycle will include VesselFinder + MarineTraffic data
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Carrier Signal Distribution -->
+  <div class="section">
+    <div class="section-header"><h3>Carrier Signal Distribution (7 days)</h3><div class="badge">{{ carrier_chart|length }} carriers</div></div>
+    <div class="section-body" style="height:320px;position:relative;">
+      <canvas id="carrierChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Regional Risk Distribution -->
+  <div class="section">
+    <div class="section-header"><h3>Regional Risk Distribution (7 days)</h3><div class="badge">{{ region_chart|length }} regions</div></div>
+    <div class="section-body" style="height:320px;position:relative;">
+      <canvas id="regionChart"></canvas>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>Operations Risk Navigator</span>
+  <span>12 scrapers · Updated every 6 hours · <a href="/api/scraper-status" style="color:var(--vf-green-light);">Scraper status</a></span>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+// Auto-refresh every 5 minutes
+setTimeout(() => location.reload(), 5 * 60 * 1000);
+document.getElementById('auto-refresh').style.cursor = 'pointer';
+document.getElementById('auto-refresh').addEventListener('click', () => location.reload());
+
+// ── chart palette ───────────────────────────────────────────────
+const VF = {
+  green: '#1C4B27', greenLight: '#2E6B3E', gold: '#EAAA00', burg: '#6F263D',
+  red: '#C0392B', amber: '#D4870A', olive: '#5B8A1E', tan: '#D5C9B4',
+  cream: '#F5F0E8', text: '#1a1a1a', muted: '#7a7568',
+  redBg: 'rgba(192,57,43,0.15)', amberBg: 'rgba(212,135,10,0.15)', greenBg: 'rgba(28,122,60,0.15)',
+};
+const chartFont = { family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", size: 11 };
+const chartDefaults = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1a1a1a', titleFont: chartFont, bodyFont: chartFont, cornerRadius: 4 } },
+};
+
+// ── Port Congestion Chart (horizontal bar) ─────────────────────
+{% if port_data %}
+new Chart(document.getElementById('portChart'), {
+  type: 'bar',
+  data: {
+    labels: [{% for p in port_data %}'{{ p.name }}'{% if not loop.last %},{% endif %}{% endfor %}],
+    datasets: [
+      { label: 'Critical', data: [{% for p in port_data %}{{ p.critical }}{% if not loop.last %},{% endif %}{% endfor %}], backgroundColor: VF.red, borderRadius: 3 },
+      { label: 'Other Signals', data: [{% for p in port_data %}{{ p.high }}{% if not loop.last %},{% endif %}{% endfor %}], backgroundColor: VF.amber, borderRadius: 3 },
+    ]
+  },
+  options: {
+    ...chartDefaults, indexAxis: 'y',
+    scales: {
+      x: { stacked: true, grid: { color: VF.cream }, ticks: { font: chartFont, color: VF.muted } },
+      y: { stacked: true, grid: { display: false }, ticks: { font: { ...chartFont, weight: 'bold' }, color: VF.text } },
+    },
+    plugins: { ...chartDefaults.plugins, legend: { display: true, position: 'top', labels: { font: chartFont, color: VF.muted, boxWidth: 12, padding: 8 } } },
+  }
+});
+{% endif %}
+
+// ── Vessel Counts Chart (grouped bar: in port vs at anchor) ────
+{% if port_vessel_data %}
+new Chart(document.getElementById('vesselChart'), {
+  type: 'bar',
+  data: {
+    labels: [{% for p in port_vessel_data %}'{{ p.name }}'{% if not loop.last %},{% endif %}{% endfor %}],
+    datasets: [
+      { label: 'In Port', data: [{% for p in port_vessel_data %}{{ p.in_port or 0 }}{% if not loop.last %},{% endif %}{% endfor %}], backgroundColor: VF.greenLight, borderRadius: 3 },
+      { label: 'At Anchor', data: [{% for p in port_vessel_data %}{{ p.at_anchor or 0 }}{% if not loop.last %},{% endif %}{% endfor %}], backgroundColor: VF.red, borderRadius: 3 },
+      { label: 'Expected', data: [{% for p in port_vessel_data %}{{ p.expected or 0 }}{% if not loop.last %},{% endif %}{% endfor %}], backgroundColor: VF.gold, borderRadius: 3 },
+    ]
+  },
+  options: {
+    ...chartDefaults, indexAxis: 'y',
+    scales: {
+      x: { stacked: false, grid: { color: VF.cream }, ticks: { font: chartFont, color: VF.muted } },
+      y: { stacked: false, grid: { display: false }, ticks: { font: { ...chartFont, weight: 'bold' }, color: VF.text } },
+    },
+    plugins: { ...chartDefaults.plugins, legend: { display: true, position: 'top', labels: { font: chartFont, color: VF.muted, boxWidth: 12, padding: 8 } } },
+  }
+});
+{% endif %}
+
+// ── Carrier Signal Chart (vertical bar) ────────────────────────
+{% if carrier_chart %}
+new Chart(document.getElementById('carrierChart'), {
+  type: 'bar',
+  data: {
+    labels: [{% for c in carrier_chart %}'{{ c.name }}'{% if not loop.last %},{% endif %}{% endfor %}],
+    datasets: [
+      { label: 'Critical', data: [{% for c in carrier_chart %}{{ c.critical }}{% if not loop.last %},{% endif %}{% endfor %}], backgroundColor: VF.red, borderRadius: 3 },
+      { label: 'Other', data: [{% for c in carrier_chart %}{{ c.total - c.critical }}{% if not loop.last %},{% endif %}{% endfor %}], backgroundColor: VF.greenLight, borderRadius: 3 },
+    ]
+  },
+  options: {
+    ...chartDefaults,
+    scales: {
+      x: { stacked: true, grid: { display: false }, ticks: { font: chartFont, color: VF.text, maxRotation: 45 } },
+      y: { stacked: true, grid: { color: VF.cream }, ticks: { font: chartFont, color: VF.muted } },
+    },
+    plugins: { ...chartDefaults.plugins, legend: { display: true, position: 'top', labels: { font: chartFont, color: VF.muted, boxWidth: 12, padding: 8 } } },
+  }
+});
+{% endif %}
+
+// ── Regional Risk Chart (doughnut) ─────────────────────────────
+{% if region_chart %}
+new Chart(document.getElementById('regionChart'), {
+  type: 'doughnut',
+  data: {
+    labels: [{% for r in region_chart %}'{{ r.name }}'{% if not loop.last %},{% endif %}{% endfor %}],
+    datasets: [{
+      data: [{% for r in region_chart %}{{ r.total }}{% if not loop.last %},{% endif %}{% endfor %}],
+      backgroundColor: [VF.burg, VF.amber, VF.greenLight, VF.olive, VF.gold, VF.red],
+      borderWidth: 2, borderColor: '#fff',
+    }]
+  },
+  options: {
+    ...chartDefaults, cutout: '55%',
+    plugins: {
+      ...chartDefaults.plugins,
+      legend: { display: true, position: 'right', labels: { font: chartFont, color: VF.text, padding: 10, boxWidth: 12 } },
+    },
+  }
+});
+{% endif %}
+</script>
+</body>
+</html>
