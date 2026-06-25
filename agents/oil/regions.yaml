@@ -1,0 +1,72 @@
+# Region definitions for Global Oil News agent
+# Focused on marine fuel supply hubs and chokepoints
+
+regions:
+  singapore:
+    display_name: "Singapore"
+    countries: ["Singapore"]
+    ports: ["Singapore"]
+    keywords:
+      - "MPA"
+      - "Enterprise Singapore"
+      - "Singapore VLSFO"
+      - "Singapore bunker"
+
+  fujairah:
+    display_name: "Fujairah / UAE"
+    countries: ["UAE", "United Arab Emirates"]
+    ports: ["Fujairah", "Jebel Ali"]
+    keywords:
+      - "FOIZ"
+      - "Fujairah Oil Industry Zone"
+      - "Gulf bunker"
+      - "Ras Tanura"
+
+  rotterdam:
+    display_name: "Rotterdam / ARA"
+    countries: ["Netherlands", "Belgium"]
+    ports: ["Rotterdam", "Amsterdam", "Antwerp"]
+    keywords:
+      - "ARA region"
+      - "European bunker"
+      - "NW Europe fuel"
+
+  strait_of_hormuz:
+    display_name: "Strait of Hormuz"
+    countries: ["Iran", "Oman"]
+    ports: []
+    keywords:
+      - "Strait of Hormuz"
+      - "Persian Gulf"
+      - "Hormuz blockade"
+      - "Gulf of Oman"
+
+  red_sea:
+    display_name: "Red Sea / Suez"
+    countries: ["Egypt", "Yemen"]
+    ports: ["Suez Canal", "Bab el-Mandeb"]
+    keywords:
+      - "Red Sea"
+      - "Houthi"
+      - "Suez Canal"
+      - "Cape of Good Hope"
+
+container_availability:
+  shortage_keywords:
+    - "VLSFO shortage"
+    - "bunker shortage"
+    - "fuel supply crisis"
+    - "force majeure"
+    - "supply shock"
+    - "inventory depletion"
+  surplus_keywords:
+    - "inventory build"
+    - "supply relief"
+    - "stock recovery"
+    - "price retreat"
+  general_keywords:
+    - "fuel surcharge"
+    - "emergency surcharge"
+    - "price spike"
+    - "backwardation"
+    - "war risk premium"

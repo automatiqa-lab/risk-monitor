@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Operations Risk Navigator - {{ week_label }}</title>
+  <style>
+    /* ── Reset & Base ──────────────────────────────────────────────── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #EEE8DC;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+    a { color: #2E6B3E; text-decoration: none; }
+    a:hover { text-decoration: underline; color: #1C4B27; }
+
+    /* ── Wrapper ───────────────────────────────────────────────────── */
+    .wrapper {
+      max-width: 720px;
+      margin: 32px auto;
+      background: #ffffff;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+    }
+
+    /* ── Header ────────────────────────────────────────────────────── */
+    .header {
+      background: #1C4B27;
+      color: #ffffff;
+      padding: 28px 36px 22px;
+      border-bottom: 4px solid #8B6914;
+    }
+    .header .brand-logo img {
+      height: 48px;
+      width: auto;
+      display: block;
+      margin-bottom: 14px;
+    }
+    .header .brand-logo-text {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #F5C842;
+      margin-bottom: 14px;
+      line-height: 1;
+    }
+    .header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+    .header .week-label {
+      font-size: 13px;
+      color: rgba(255,255,255,0.75);
+    }
+    /* ── Executive Summary ─────────────────────────────────────────── */
+    .exec-summary {
+      background: #F5F0E8;
+      border-left: 4px solid #8B6914;
+      padding: 18px 24px;
+      margin: 24px 36px;
+      border-radius: 0 4px 4px 0;
+      font-size: 14px;
+      color: #2c2c2c;
+    }
+    .exec-summary .label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #8B6914;
+      margin-bottom: 8px;
+    }
+    .exec-summary p:last-child { margin-bottom: 0 !important; }
+
+    /* ── Section Headers ───────────────────────────────────────────── */
+    .section {
+      padding: 0 36px 24px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px solid #D5C9B4;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+      margin-top: 28px;
+    }
+    .section-header h2 {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #1C4B27;
+    }
+    .section-header .section-badge {
+      margin-left: auto;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #888;
+    }
+
+    /* ── Container Watch (FIRST section - prominent) ───────────────── */
+    .alert-band {
+      background: #2C0A0A;
+      color: #FFC2B0;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      padding: 7px 36px;
+    }
+    .container-watch-card {
+      border-radius: 4px;
+      padding: 16px 18px;
+      margin-bottom: 10px;
+    }
+    .container-watch-card.shortage {
+      background: #FFF5F5;
+      border: 1px solid #F5A8A8;
+      border-left: 4px solid #C0392B;
+    }
+    .container-watch-card.surplus {
+      background: #F0FFF4;
+      border: 1px solid #9AE6B4;
+      border-left: 4px solid #27AE60;
+    }
+    .container-watch-card.general {
+      background: #FFFBEB;
+      border: 1px solid #F6D860;
+      border-left: 4px solid #D4A017;
+    }
+    .container-watch-card .signal-type {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .signal-shortage { color: #C0392B; }
+    .signal-surplus  { color: #27AE60; }
+    .signal-general  { color: #D4A017; }
+    .container-watch-card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .container-watch-card ul li {
+      font-size: 13px;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      color: #333;
+    }
+    .container-watch-card ul li:last-child { border-bottom: none; }
+    .container-watch-card ul li .bullet-shortage { color: #C0392B; flex-shrink: 0; font-weight: 700; }
+    .container-watch-card ul li .bullet-surplus  { color: #27AE60; flex-shrink: 0; font-weight: 700; }
+    .container-watch-card ul li .bullet-general  { color: #D4A017; flex-shrink: 0; font-weight: 700; }
+    .region-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      background: rgba(0,0,0,0.07);
+      border-radius: 3px;
+      padding: 1px 5px;
+      margin-right: 4px;
+      color: #555;
+    }
+
+    /* ── Region Block ──────────────────────────────────────────────── */
+    .region-block {
+      margin-bottom: 20px;
+    }
+    .region-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1C4B27;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .region-title .ports-hint {
+      font-weight: 400;
+      font-size: 11px;
+      color: #999;
+    }
+
+    /* ── Article Card ──────────────────────────────────────────────── */
+    .article-card {
+      border: 1px solid #E5DDD0;
+      border-radius: 4px;
+      padding: 13px 16px;
+      margin-bottom: 10px;
+      background: #FDFAF6;
+    }
+    .article-card .article-headline {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 5px;
+    }
+    .article-card .article-meta {
+      font-size: 11px;
+      color: #999;
+      margin-bottom: 7px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .article-card .source-badge {
+      background: #E5DDD0;
+      border-radius: 3px;
+      padding: 1px 6px;
+      font-weight: 600;
+      color: #555;
+    }
+    .article-card .article-summary {
+      font-size: 13px;
+      color: #444;
+      line-height: 1.55;
+    }
+    .article-card .read-more {
+      display: inline-block;
+      margin-top: 7px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #2E6B3E;
+    }
+
+    /* ── Shipping Lines ────────────────────────────────────────────── */
+    .carrier-block {
+      border-left: 3px solid #1C4B27;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      background: #F9F7F3;
+      border-radius: 0 4px 4px 0;
+    }
+    .carrier-block .carrier-name {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #1C4B27;
+      margin-bottom: 8px;
+    }
+
+    /* ── No Items Placeholder ──────────────────────────────────────── */
+    .no-items {
+      font-size: 13px;
+      color: #bbb;
+      font-style: italic;
+      padding: 6px 0;
+    }
+
+    /* ── Footer ────────────────────────────────────────────────────── */
+    .footer {
+      background: #1C4B27;
+      border-top: 4px solid #8B6914;
+      padding: 22px 36px;
+      color: rgba(255,255,255,0.65);
+      font-size: 11px;
+      line-height: 1.7;
+    }
+    .footer .sources-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 6px;
+    }
+    .footer .sources-list {
+      list-style: none;
+      padding: 0;
+      columns: 2;
+      column-gap: 24px;
+      margin-bottom: 16px;
+    }
+    .footer .sources-list li { break-inside: avoid; padding: 2px 0; }
+    .footer .sources-list a { color: rgba(255,255,255,0.55); }
+    .footer .sources-list a:hover { color: #F5C842; }
+    .footer .divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      margin: 14px 0;
+    }
+    .footer .trademark {
+      font-size: 11px;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 4px;
+    }
+    .footer .contact {
+      font-size: 11px;
+      color: rgba(255,255,255,0.55);
+    }
+    .footer .contact a {
+      color: #F5C842;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- ── Header ─────────────────────────────────────────────────── -->
+  <div class="header">
+    <div class="brand-logo">
+      {% if logo_src %}
+      <img src="{{ logo_src }}" alt="Operations Risk Navigator" />
+      {% else %}
+      <span class="brand-logo-text">Operations Risk Navigator</span>
+      {% endif %}
+    </div>
+    <h1>Operations Risk Navigator</h1>
+    <div class="week-label">{{ week_label }}</div>
+  </div>
+
+  <!-- ── Executive Summary ──────────────────────────────────────── -->
+  {% if executive_summary %}
+  <div class="exec-summary">
+    <div class="label">Weekly Briefing</div>
+    {% for para in executive_summary.split('\n\n') %}
+    {% if para.strip() %}<p style="margin-bottom:10px;">{{ para.strip() }}</p>{% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!--  SECTION 1 - CONTAINER & EQUIPMENT ALERTS  (first)            -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="alert-band">&#9888; Container &amp; Equipment Alerts</div>
+  <div class="section">
+
+    {% if container_watch.shortage %}
+    <div class="container-watch-card shortage" style="margin-top:16px;">
+      <div class="signal-type signal-shortage">&#9632; Shortage Signals</div>
+      <ul>
+        {% for item in container_watch.shortage %}
+        <li>
+          <span class="bullet-shortage">!</span>
+          <div>
+            <span class="region-tag">{{ item.region }}</span>{{ item.summary }}
+            {% if item.url %}&nbsp;<a href="{{ item.url }}" target="_blank" style="font-size:11px;color:#C0392B;">Source &rarr;</a>{% endif %}
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if container_watch.general %}
+    <div class="container-watch-card general" {% if not container_watch.shortage %}style="margin-top:16px;"{% endif %}>
+      <div class="signal-type signal-general">&#9632; General Alerts</div>
+      <ul>
+        {% for item in container_watch.general %}
+        <li>
+          <span class="bullet-general">&rsaquo;</span>
+          <div>
+            <span class="region-tag">{{ item.region }}</span>{{ item.summary }}
+            {% if item.url %}&nbsp;<a href="{{ item.url }}" target="_blank" style="font-size:11px;color:#D4A017;">Source &rarr;</a>{% endif %}
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if container_watch.surplus %}
+    <div class="container-watch-card surplus" {% if not container_watch.shortage and not container_watch.general %}style="margin-top:16px;"{% endif %}>
+      <div class="signal-type signal-surplus">&#9632; Surplus / Relief Signals</div>
+      <ul>
+        {% for item in container_watch.surplus %}
+        <li>
+          <span class="bullet-surplus">+</span>
+          <div>
+            <span class="region-tag">{{ item.region }}</span>{{ item.summary }}
+            {% if item.url %}&nbsp;<a href="{{ item.url }}" target="_blank" style="font-size:11px;color:#27AE60;">Source &rarr;</a>{% endif %}
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if not container_watch.shortage and not container_watch.surplus and not container_watch.general %}
+    <div class="no-items" style="margin-top:16px;">No container availability alerts detected this week.</div>
+    {% endif %}
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!--  SECTION 2 - REGIONAL HIGHLIGHTS                              -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <h2>Regional Highlights</h2>
+      <span class="section-badge">by origin</span>
+    </div>
+
+    {% for region in regions %}
+    <div class="region-block">
+      <div class="region-title">
+        {{ region.display_name }}
+        <span class="ports-hint">{{ region.ports_hint }}</span>
+      </div>
+
+      {% if region.articles %}
+        {% for article in region.articles %}
+        <div class="article-card">
+          <div class="article-headline">{{ article.title }}</div>
+          <div class="article-meta">
+            <span class="source-badge">{{ article.source }}</span>
+            <span>{{ article.published_date }}</span>
+          </div>
+          <div class="article-summary">{{ article.summary }}</div>
+          {% if article.url %}
+          <a class="read-more" href="{{ article.url }}" target="_blank">Read full article &rarr;</a>
+          {% endif %}
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="no-items">No major news this week for this region.</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!--  SECTION 3 - SHIPPING LINES UPDATE                            -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <h2>Shipping Lines Update</h2>
+      <span class="section-badge">carrier news</span>
+    </div>
+
+    {% for carrier in carriers %}
+    <div class="carrier-block">
+      <div class="carrier-name">{{ carrier.name }}</div>
+      {% if carrier.articles %}
+        {% for article in carrier.articles %}
+        <div class="article-card">
+          <div class="article-headline">{{ article.title }}</div>
+          <div class="article-meta">
+            <span class="source-badge">{{ article.source }}</span>
+            <span>{{ article.published_date }}</span>
+          </div>
+          <div class="article-summary">{{ article.summary }}</div>
+          {% if article.url %}
+          <a class="read-more" href="{{ article.url }}" target="_blank">Read full article &rarr;</a>
+          {% endif %}
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="no-items">No notable updates from {{ carrier.name }} this week.</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- ── Footer ─────────────────────────────────────────────────── -->
+  <div class="footer">
+    <div class="sources-label">Sources consulted this week</div>
+    <ul class="sources-list">
+      {% for source in sources_consulted %}
+      <li><a href="{{ source.url }}" target="_blank">{{ source.name }}</a></li>
+      {% endfor %}
+    </ul>
+    <hr class="divider">
+    <div class="trademark">Generated by Operations Risk Navigator.</div>
+  </div>
+
+</div>
+</body>
+</html>

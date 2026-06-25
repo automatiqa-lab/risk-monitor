@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>{% block title %}Operations Risk Navigator{% endblock %}</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --vf-green: #1C4B27; --vf-green-light: #2E6B3E; --vf-gold: #8B6914;
+    --vf-gold-bright: #EAAA00; --vf-burg: #6F263D; --vf-tan: #D5C9B4;
+    --vf-cream: #F5F0E8; --vf-warm: #EEE8DC; --vf-bg: #FAFAF8;
+    --vf-card: #FFFFFF; --vf-card-hover: #F9F7F3; --vf-border: #E5DDD0;
+    --vf-text: #1a1a1a; --vf-text-muted: #7a7568;
+    --red: #C0392B; --red-bg: #FFF5F5; --amber: #D4870A; --amber-bg: #FFFBEB;
+    --green: #1C7A3C; --green-bg: #F0FFF4; --olive: #5B8A1E; --olive-bg: #F8FFF0;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: var(--vf-bg); color: var(--vf-text); line-height: 1.5; }
+  a { color: var(--vf-green-light); text-decoration: none; }
+  a:hover { text-decoration: underline; color: var(--vf-green); }
+
+  .topnav { background: var(--vf-green); border-bottom: 4px solid var(--vf-gold-bright); padding: 0 24px; display: flex; align-items: center; height: 56px; position: sticky; top: 0; z-index: 100; }
+  .topnav .brand { font-size: 15px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--vf-gold-bright); margin-right: 32px; }
+  .topnav .brand span { color: #fff; font-weight: 400; letter-spacing: 1px; }
+  .topnav nav { display: flex; gap: 4px; }
+  .topnav nav a { padding: 6px 14px; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; color: rgba(255,255,255,0.7); border-radius: 4px; transition: all 0.15s; }
+  .topnav nav a:hover, .topnav nav a.active { background: rgba(255,255,255,0.15); color: #fff; text-decoration: none; }
+  .topnav .meta { margin-left: auto; font-size: 11px; color: rgba(255,255,255,0.55); display: flex; align-items: center; gap: 16px; }
+  .topnav .meta .live-dot { width: 8px; height: 8px; background: #4ADE80; border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+  .container { max-width: 1440px; margin: 0 auto; padding: 20px 24px; }
+  .breadcrumb { font-size: 12px; color: var(--vf-text-muted); margin-bottom: 16px; }
+  .breadcrumb a { color: var(--vf-green-light); }
+
+  .page-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+  .page-header .icon { font-size: 32px; }
+  .page-header h1 { font-size: 22px; font-weight: 800; }
+  .page-header .subtitle { font-size: 12px; color: var(--vf-text-muted); }
+  .page-header .status-pill { margin-left: auto; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+
+  .section { background: var(--vf-card); border: 1px solid var(--vf-border); border-radius: 8px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .section-header { padding: 14px 18px; border-bottom: 1px solid var(--vf-border); display: flex; align-items: center; gap: 10px; background: var(--vf-cream); }
+  .section-header h3 { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--vf-green); }
+  .section-header .badge { margin-left: auto; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 3px; background: var(--vf-tan); color: var(--vf-text-muted); }
+  .section-body { padding: 16px 18px; }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .kpi { background: var(--vf-card); border: 1px solid var(--vf-border); border-radius: 8px; padding: 16px; text-align: center; position: relative; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .kpi .stripe { position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .kpi .label { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--vf-text-muted); margin-bottom: 6px; }
+  .kpi .value { font-size: 28px; font-weight: 800; line-height: 1; }
+  .kpi .delta { font-size: 11px; margin-top: 4px; font-weight: 600; }
+  .kpi .sub { font-size: 10px; color: var(--vf-text-muted); margin-top: 2px; }
+
+  .alert-item { padding: 10px 0; border-bottom: 1px solid var(--vf-border); display: flex; gap: 10px; align-items: flex-start; }
+  .alert-item:last-child { border-bottom: none; }
+  .alert-sev { width: 5px; min-height: 36px; border-radius: 3px; flex-shrink: 0; margin-top: 2px; }
+  .alert-title { font-size: 12px; font-weight: 600; color: var(--vf-text); margin-bottom: 2px; }
+  .alert-meta { font-size: 10px; color: var(--vf-text-muted); display: flex; gap: 6px; align-items: center; }
+  .alert-tag { font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 3px; background: var(--vf-cream); color: var(--vf-text-muted); border: 1px solid var(--vf-border); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
+
+  .footer { margin-top: 32px; padding: 16px 0; border-top: 2px solid var(--vf-border); font-size: 10px; color: var(--vf-text-muted); display: flex; justify-content: space-between; }
+
+  .c-red { color: var(--red); } .c-amber { color: var(--amber); } .c-green { color: var(--green); } .c-olive { color: var(--olive); }
+  .bg-red { background: var(--red); } .bg-amber { background: var(--amber); } .bg-green { background: var(--green); } .bg-olive { background: var(--olive); }
+
+  @media (max-width: 1200px) { .two-col { grid-template-columns: 1fr; } .kpi-row { grid-template-columns: repeat(3, 1fr); } }
+  {% block extra_css %}{% endblock %}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="brand">Operations Risk Navigator</div>
+  <nav>
+    <a href="/" {% if active_nav == 'dashboard' %}class="active"{% endif %}>Dashboard</a>
+    <a href="/freight" {% if active_nav == 'freight' %}class="active"{% endif %}>Freight</a>
+    <a href="/oil" {% if active_nav == 'oil' %}class="active"{% endif %}>Oil &amp; Fuel</a>
+    <a href="/diesel" {% if active_nav == 'diesel' %}class="active"{% endif %}>Diesel</a>
+    <a href="/strikes" {% if active_nav == 'strikes' %}class="active"{% endif %}>Disruptions</a>
+    <a href="/weather" {% if active_nav == 'weather' %}class="active"{% endif %}>Weather</a>
+    <a href="/geopolitical" {% if active_nav == 'geopolitical' %}class="active"{% endif %}>Geopolitical</a>
+    <a href="/congestion" {% if active_nav == 'congestion' %}class="active"{% endif %}>Congestion</a>
+  </nav>
+  <div class="meta">
+    <div class="live-dot"></div>
+    <span>LIVE · {{ last_update }}</span>
+    <a href="/logout" style="color:rgba(255,255,255,0.5);font-size:11px;text-decoration:none;margin-left:8px;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Logout</a>
+  </div>
+</div>
+
+<div class="container">
+  {% block content %}{% endblock %}
+
+  <div class="footer">
+    <span>Operations Risk Navigator</span>
+    <span>12 scrapers · Updated every 6 hours</span>
+  </div>
+</div>
+
+<script>setTimeout(() => location.reload(), 5 * 60 * 1000);</script>
+</body>
+</html>

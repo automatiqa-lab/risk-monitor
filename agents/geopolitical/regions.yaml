@@ -1,0 +1,94 @@
+# Region definitions for Geopolitical & Sanctions agent
+
+regions:
+  east_africa:
+    display_name: "East Africa"
+    countries: ["Kenya", "Tanzania", "Uganda", "Rwanda", "Ethiopia", "Djibouti", "Somalia", "Sudan"]
+    ports: ["Mombasa", "Dar es Salaam", "Djibouti", "Lamu"]
+    keywords:
+      - "East Africa sanctions"
+      - "Somalia embargo"
+      - "Ethiopia trade"
+      - "Djibouti military base"
+
+  central_america:
+    display_name: "Central America & Panama"
+    countries: ["Panama", "Honduras", "Guatemala", "Nicaragua", "Costa Rica", "Colombia"]
+    ports: ["Colón", "Puerto Cortes", "Balboa", "Buenaventura", "Cartagena"]
+    keywords:
+      - "Panama Canal sovereignty"
+      - "China Panama"
+      - "COSCO Balboa"
+      - "Central America trade"
+
+  brazil:
+    display_name: "Brazil"
+    countries: ["Brazil"]
+    ports: ["Santos", "Paranaguá", "Itajaí"]
+    keywords:
+      - "Brazil trade policy"
+      - "Mercosur"
+      - "Brazil China trade"
+      - "Santos port auction"
+
+  north_europe:
+    display_name: "North Europe"
+    countries: ["Germany", "Netherlands", "Belgium", "France", "United Kingdom"]
+    ports: ["Rotterdam", "Hamburg", "Antwerp", "Bremerhaven"]
+    keywords:
+      - "EU trade policy"
+      - "CBAM"
+      - "EU sanctions"
+      - "European customs"
+      - "Russia sanctions"
+
+  vietnam:
+    display_name: "Vietnam & Southeast Asia"
+    countries: ["Vietnam", "Philippines", "Indonesia", "Thailand", "Malaysia", "Singapore"]
+    ports: ["Ho Chi Minh City", "Hai Phong", "Singapore", "Manila"]
+    keywords:
+      - "South China Sea"
+      - "Taiwan Strait"
+      - "ASEAN trade"
+      - "Vietnam tariff"
+
+  middle_east:
+    display_name: "Middle East & Gulf"
+    countries: ["Iran", "Iraq", "UAE", "Saudi Arabia", "Israel", "Yemen", "Qatar"]
+    ports: ["Jebel Ali", "Fujairah", "Jeddah"]
+    keywords:
+      - "Iran sanctions"
+      - "Strait of Hormuz"
+      - "Gulf shipping"
+      - "Houthi"
+      - "Red Sea"
+
+  china:
+    display_name: "China"
+    countries: ["China"]
+    ports: ["Shanghai", "Ningbo", "Shenzhen", "Qingdao", "Xiamen"]
+    keywords:
+      - "China tariff"
+      - "Section 301"
+      - "China trade war"
+      - "COSCO sanctions"
+      - "China inspection"
+
+container_availability:
+  shortage_keywords:
+    - "trade ban"
+    - "embargo"
+    - "port closure"
+    - "vessel seizure"
+    - "export halt"
+  surplus_keywords:
+    - "sanctions lifted"
+    - "trade deal"
+    - "tariff removed"
+    - "agreement reached"
+  general_keywords:
+    - "new tariff"
+    - "sanctions update"
+    - "inspection change"
+    - "compliance"
+    - "diplomatic"
