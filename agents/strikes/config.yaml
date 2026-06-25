@@ -1,0 +1,76 @@
+# Strikes & Disruptions agent - configuration
+# Covers: labour strikes, port blockades, customs slowdowns, union disputes,
+#          government shutdowns - anything that halts freight movement
+
+agent:
+  max_articles: 20
+  lookback_days: 7
+
+# Google News queries for strike / disruption intelligence
+queries:
+  - query: '"port strike" OR "dock worker strike" OR "longshoremen" (Mombasa OR "Dar es Salaam" OR Rotterdam OR Hamburg OR Santos)'
+    label: "Port Strikes"
+  - query: '"trucker strike" OR "transport strike" OR "driver walkout" (Europe OR Brazil OR Kenya)'
+    label: "Trucking Strikes"
+  - query: '"customs strike" OR "customs slowdown" OR "border blockade" freight logistics'
+    label: "Customs & Border Disruptions"
+  - query: '"rail strike" OR "railway strike" freight cargo (Germany OR France OR Italy OR Belgium)'
+    label: "Rail Strikes"
+  - query: '"union negotiation" OR "collective bargaining" port shipping logistics'
+    label: "Union Negotiations"
+  - query: '"port blockade" OR "port congestion" OR "terminal closure" (Africa OR "Central America" OR Europe OR Vietnam)'
+    label: "Port Blockades & Closures"
+  - query: '"government shutdown" OR "ministry strike" customs clearance import export'
+    label: "Government Disruptions"
+
+# Scrape targets (carrier advisory pages for operational disruption notices)
+scrape_sources:
+  - name: "Maersk Advisories"
+    url: "https://www.maersk.com/news"
+    type: scrape
+  - name: "Hapag-Lloyd News"
+    url: "https://www.hapag-lloyd.com/en/news-insights.html"
+    type: scrape
+
+# Risk severity classification
+risk_levels:
+  critical:
+    keywords:
+      - "strike action"
+      - "port shutdown"
+      - "terminal closure"
+      - "complete halt"
+      - "indefinite strike"
+      - "blockade"
+    color: red
+  high:
+    keywords:
+      - "work stoppage"
+      - "walkout"
+      - "slowdown"
+      - "go-slow"
+      - "rolling strike"
+      - "overtime ban"
+    color: amber
+  monitoring:
+    keywords:
+      - "union talks"
+      - "negotiation"
+      - "threat to strike"
+      - "ballot"
+      - "dispute"
+      - "wage demand"
+    color: yellow
+
+# PPTX output structure (6-slide deck)
+slides:
+  - title_dashboard      # Title + active disruption KPIs
+  - active_disruptions   # Current strikes/blockades by region with severity
+  - risk_timeline        # Timeline of events + escalation path
+  - trade_lane_impact    # Which trade lanes are affected + lead time impact
+  - forward_outlook      # Union negotiation status, strike probability assessment
+  - actions              # Recommended mitigations
+
+output:
+  directory: "./output"
+  filename_pattern: "strikes-report-{date}.pptx"

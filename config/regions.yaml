@@ -1,0 +1,235 @@
+# Region definitions for Operations Risk Navigator
+# Each region maps to countries, ports, and keywords used for article tagging.
+
+regions:
+  east_africa:
+    display_name: "East Africa"
+    countries:
+      - Kenya
+      - Tanzania
+      - Ethiopia
+      - Uganda
+      - Rwanda
+      - Mozambique
+      - Madagascar
+      - Djibouti
+      - Somalia
+      - Eritrea
+      - Comoros
+      - Seychelles
+    ports:
+      - Mombasa
+      - Dar es Salaam
+      - Djibouti
+      - Nacala
+      - Beira
+      - Zanzibar
+      - Tanga
+      - Lamu
+      - Port Sudan
+    keywords:
+      - "East Africa"
+      - "Horn of Africa"
+      - "LAPSSET"           # Lamu Port–South Sudan–Ethiopia Transport
+      - "Northern Corridor"
+      - "Central Corridor"
+      - "EAC freight"
+      - "Sub-Saharan"
+
+  central_america:
+    display_name: "Central America"
+    countries:
+      - Panama
+      - Costa Rica
+      - Guatemala
+      - Honduras
+      - El Salvador
+      - Nicaragua
+      - Belize
+    ports:
+      - "Puerto Colón"
+      - Balboa
+      - "Puerto Limón"
+      - Caldera
+      - Puerto Quetzal
+      - Puerto Cortés
+      - Acajutla
+      - Puerto Castilla
+    keywords:
+      - "Central America"
+      - "Panama Canal"
+      - "Panama corridor"
+      - "CAFTA"
+      - "Mesoamerica"
+      - "transhipment hub"
+
+  brazil:
+    display_name: "Brazil"
+    countries:
+      - Brazil
+    ports:
+      - Santos
+      - Paranaguá
+      - Rio de Janeiro
+      - Itajaí
+      - Rio Grande
+      - Manaus
+      - Belém
+      - Salvador
+      - Fortaleza
+      - Suape
+      - Vila do Conde
+    keywords:
+      - Brazil
+      - Brasil
+      - "Brazilian ports"
+      - MERCOSUR
+      - "Port of Santos"
+      - "South America"
+      - "agribulk Brazil"
+      - "Mercosul"
+
+  north_europe:
+    display_name: "North Europe"
+    countries:
+      - Netherlands
+      - Germany
+      - Belgium
+      - United Kingdom
+      - Sweden
+      - Denmark
+      - Norway
+      - Finland
+      - Poland
+    ports:
+      - Rotterdam
+      - Hamburg
+      - Antwerp
+      - Bremerhaven
+      - Felixstowe
+      - Zeebrugge
+      - Gothenburg
+      - Copenhagen
+      - Oslo
+      - Gdańsk
+      - Southampton
+    keywords:
+      - "North Europe"
+      - "Northern Europe"
+      - "ARA ports"           # Antwerp-Rotterdam-Amsterdam
+      - "Hamburg range"
+      - "Le Havre range"
+      - "NVOCC Europe"
+      - "North Sea"
+      - "Baltic"
+
+  vietnam:
+    display_name: "Vietnam"
+    countries:
+      - Vietnam
+    ports:
+      - "Ho Chi Minh City"
+      - "Cai Mep"
+      - "Hai Phong"
+      - "Da Nang"
+      - "Quy Nhon"
+      - "Cat Lai"
+      - "Vung Tau"
+    keywords:
+      - Vietnam
+      - Vietnamese
+      - "Viet Nam"
+      - "Ho Chi Minh"
+      - HCMC
+      - "Mekong Delta"
+      - "Southeast Asia freight"
+      - "ASEAN shipping"
+      - "Tan Cang"
+
+  middle_east_conflict:
+    display_name: "Middle East Conflict & Chokepoint Risk"
+    countries:
+      - Yemen
+      - Iran
+      - Israel
+      - Saudi Arabia
+      - Egypt
+      - Oman
+      - Djibouti
+      - Lebanon
+      - Iraq
+    ports:
+      - "Port of Aden"
+      - Jeddah
+      - "Suez Canal"
+      - "Port Said"
+      - "Bandar Abbas"
+      - Salalah
+      - Djibouti
+      - Eilat
+      - Jebel Ali
+      - "King Abdullah Port"
+    keywords:
+      - "Red Sea"
+      - Houthi
+      - "Strait of Hormuz"
+      - "Bab el-Mandeb"
+      - "Bab-el-Mandeb"
+      - "Cape of Good Hope"
+      - "war risk"
+      - "war risk premium"
+      - "Red Sea diversion"
+      - "Red Sea attacks"
+      - "Red Sea shipping"
+      - "Suez Canal"
+      - "Gulf of Aden"
+      - "Persian Gulf"
+      - "Arabian Sea"
+      - "Iran conflict"
+      - "Iran shipping"
+      - "Middle East shipping"
+      - "Middle East conflict"
+      - "geopolitical risk"
+      - "chokepoint"
+      - "shipping corridor"
+      - "military escort"
+      - "naval blockade"
+
+# Container availability keywords (cross-region signal detection)
+container_availability:
+  shortage_signals:
+    - "equipment shortage"
+    - "container shortage"
+    - "box shortage"
+    - "lack of containers"
+    - "container scarcity"
+    - "empty container"
+    - "container imbalance"
+    - "repositioning"
+    - "capacity crunch"
+    - "equipment availability"
+    - "TEU shortage"
+    - "reefer shortage"
+    - "supply squeeze"
+
+  surplus_signals:
+    - "equipment surplus"
+    - "container surplus"
+    - "oversupply of containers"
+    - "container glut"
+    - "excess capacity"
+    - "idle containers"
+    - "container overhang"
+
+  general_signals:
+    - "container availability"
+    - "equipment release"
+    - "booking freeze"
+    - "space allocation"
+    - "blank sailing"
+    - "port congestion"
+    - "dwell time"
+    - "free time"
+    - "demurrage"
+    - "detention"
+    - "chassis shortage"

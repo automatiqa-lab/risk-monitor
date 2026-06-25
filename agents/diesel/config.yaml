@@ -1,0 +1,61 @@
+# European Diesel Risks agent - configuration
+# Covers: automotive gas oil (AGO) prices, trucking fuel costs, EU policy
+
+agent:
+  max_articles: 15
+  lookback_days: 7
+
+# Monitored countries (pump prices incl. taxes)
+countries:
+  - code: DE
+    name: Germany
+    flag: "\U0001F1E9\U0001F1EA"
+    currency: "€/1,000 L"
+  - code: ES
+    name: Spain
+    flag: "\U0001F1EA\U0001F1F8"
+    currency: "€/1,000 L"
+  - code: IT
+    name: Italy
+    flag: "\U0001F1EE\U0001F1F9"
+    currency: "€/1,000 L"
+  - code: UK
+    name: United Kingdom
+    flag: "\U0001F1EC\U0001F1E7"
+    currency: "p/litre"
+
+# Google News queries for diesel intelligence
+queries:
+  - query: 'diesel price (Germany OR Belgium OR Italy OR Spain) transport logistics'
+    label: "EU Diesel Prices"
+  - query: '"fuel surcharge" trucking (Germany OR Europe) logistics'
+    label: "Trucking Fuel Surcharges"
+  - query: 'trucker strike OR "driver walkout" OR "transport strike" Europe'
+    label: "Trucking Strikes"
+  - query: '"diesel tax" OR "fuel shield" OR "fuel rebate" (Germany OR Italy OR Spain OR Belgium)'
+    label: "EU Fuel Policy"
+  - query: '"Brent crude" diesel refinery margin crack spread Europe'
+    label: "Diesel Crack Spreads"
+
+# Scrape targets
+scrape_sources:
+  - name: "EU Oil Bulletin"
+    url: "https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en"
+    type: scrape
+  - name: "Fuelo.eu"
+    url: "https://www.fuelo.net/"
+    type: scrape
+
+# PPTX output structure (7-slide deck)
+slides:
+  - title_dashboard      # Title + KPI cards (highest price, max surge, countries)
+  - current_prices       # Country price cards + 4-week history table
+  - price_trajectory     # 4-week chart
+  - risk_register        # Critical/High risks if trend persists
+  - additional_risks     # Medium risks + policy divergence analysis
+  - forward_scenarios    # Base / Stress / Shock (next 8 weeks)
+  - actions              # Recommended actions
+
+output:
+  directory: "./output"
+  filename_pattern: "diesel-risk-report-{date}.pptx"

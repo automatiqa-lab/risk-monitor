@@ -1,0 +1,99 @@
+# Weather & Natural Disasters agent - configuration
+# Covers: hurricanes, typhoons, floods, droughts, volcanic eruptions
+# impacting ports, trade lanes, and origin supply
+
+agent:
+  max_articles: 25
+  lookback_days: 7
+
+# Google News queries per risk type
+queries:
+  # Tropical cyclones & storms
+  - query: '(hurricane OR typhoon OR cyclone) (port OR shipping OR freight OR logistics) disruption'
+    label: "Tropical Cyclones"
+  - query: '(tropical storm OR storm warning) (Mombasa OR Santos OR Rotterdam OR Hamburg OR "Ho Chi Minh" OR "Hai Phong")'
+    label: "Storm Warnings - Key Ports"
+
+  # Flooding
+  - query: 'flood (port OR warehouse OR logistics OR freight) (Kenya OR Tanzania OR Brazil OR Vietnam OR Germany OR Netherlands)'
+    label: "Flooding - Trade Lane Impact"
+  - query: '"port closure" OR "terminal closure" (storm OR flood OR weather) shipping'
+    label: "Weather-Driven Port Closures"
+
+  # Drought (coffee origin impact)
+  - query: 'drought (Brazil OR Vietnam OR Ethiopia OR Colombia) (coffee OR agriculture OR harvest)'
+    label: "Drought - Origin Regions"
+  - query: '"water level" OR "low water" (Rhine OR Panama Canal OR Mississippi) shipping freight'
+    label: "Low Water Levels - Inland Waterways"
+
+  # Earthquakes & volcanic
+  - query: 'earthquake (port OR shipping OR logistics) damage disruption'
+    label: "Earthquake Impact"
+  - query: 'volcano eruption (shipping OR aviation OR logistics OR ash cloud)'
+    label: "Volcanic Disruption"
+
+  # Carrier weather advisories
+  - query: '(Maersk OR MSC OR "CMA CGM" OR "Hapag-Lloyd") (weather OR storm OR hurricane) advisory schedule'
+    label: "Carrier Weather Advisories"
+
+# Scrape targets - official weather/disaster monitoring sources
+scrape_sources:
+  - name: "GDACS"
+    url: "https://www.gdacs.org/default.aspx"
+    type: scrape
+    notes: "Global Disaster Alert and Coordination System"
+  - name: "NOAA NHC"
+    url: "https://www.nhc.noaa.gov/"
+    type: scrape
+    notes: "National Hurricane Center - Atlantic/Pacific cyclone tracking"
+  - name: "ReliefWeb"
+    url: "https://reliefweb.int/disasters"
+    type: scrape
+    notes: "UN disaster situation reports"
+  - name: "WMO Severe Weather"
+    url: "https://severe.worldweather.wmo.int/"
+    type: scrape
+    notes: "World Meteorological Organisation severe weather warnings"
+
+# Severity classification
+severity:
+  critical:
+    keywords:
+      - "category 4"
+      - "category 5"
+      - "super typhoon"
+      - "port closure"
+      - "terminal shutdown"
+      - "force majeure"
+      - "state of emergency"
+      - "catastrophic"
+  high:
+    keywords:
+      - "category 3"
+      - "severe flood"
+      - "major earthquake"
+      - "evacuation"
+      - "vessel delays"
+      - "port restricted"
+      - "drought emergency"
+  monitoring:
+    keywords:
+      - "tropical storm"
+      - "weather advisory"
+      - "storm warning"
+      - "low water"
+      - "frost risk"
+      - "dry spell"
+
+# PPTX output structure (6-slide deck)
+slides:
+  - title_dashboard      # Title + active weather KPIs by region
+  - active_events        # Current weather events mapped to trade lanes
+  - origin_impact        # Coffee origin weather conditions (Brazil, Vietnam, East Africa)
+  - port_disruptions     # Port closures and vessel delays
+  - forward_forecast     # 7-14 day outlook per region
+  - actions              # Recommended mitigations
+
+output:
+  directory: "./output"
+  filename_pattern: "weather-risk-report-{date}.pptx"

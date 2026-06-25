@@ -1,0 +1,67 @@
+# Region definitions for European Diesel Risks agent
+# Focused on 4 key European markets: Germany, Spain, Italy, UK
+
+regions:
+  germany:
+    display_name: "Germany"
+    countries: ["Germany"]
+    ports: ["Hamburg", "Bremen", "Bremerhaven"]
+    keywords:
+      - "Bundeskartellamt"
+      - "German diesel"
+      - "Autobahn"
+      - "German trucking"
+      - "Germany fuel"
+
+  spain:
+    display_name: "Spain"
+    countries: ["Spain"]
+    ports: ["Valencia", "Barcelona", "Algeciras"]
+    keywords:
+      - "Spanish diesel"
+      - "Spain fuel"
+      - "Spain trucking"
+      - "Spanish transport"
+
+  italy:
+    display_name: "Italy"
+    countries: ["Italy"]
+    ports: ["Genoa", "Trieste", "La Spezia", "Livorno"]
+    keywords:
+      - "Italian diesel"
+      - "Italy fuel tax"
+      - "Autostrada"
+      - "Italy trucking"
+
+  united_kingdom:
+    display_name: "United Kingdom"
+    countries: ["United Kingdom", "UK", "Britain", "England", "Scotland", "Wales"]
+    ports: ["Felixstowe", "Southampton", "London Gateway", "Liverpool", "Tilbury"]
+    keywords:
+      - "UK diesel"
+      - "British fuel"
+      - "UK fuel duty"
+      - "UK trucking"
+      - "HMRC fuel duty"
+      - "UK haulage"
+
+container_availability:
+  shortage_keywords:
+    - "diesel shortage"
+    - "fuel crisis"
+    - "pump shortage"
+    - "supply disruption"
+    - "trucker strike"
+    - "driver walkout"
+  surplus_keywords:
+    - "price relief"
+    - "fuel shield"
+    - "tax cut"
+    - "diesel subsidy"
+    - "fuel duty freeze"
+  general_keywords:
+    - "diesel price"
+    - "fuel surcharge"
+    - "pump price"
+    - "refinery margin"
+    - "crack spread"
