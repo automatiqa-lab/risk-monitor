@@ -1,0 +1,12 @@
+# Operations Risk Navigator
+
+> A multi-agent system that watches operational risk across ocean freight, fuel, labour, weather, and geopolitics, then turns what it finds into briefings you can use - a CLI that produces weekly reports (HTML, Markdown, PDF, PPTX) and a live dashboard that refreshes itself.
+
+The model behind the summaries is yours to choose: everything routes through LiteLLM, so the same code runs on Anthropic, OpenAI, or a local Ollama model. Seven agents each own a slice of risk and share one five-step pipeline (collect, filter, summarize, compose, save). Part of Automatiqa Lab.
+
+## Docs
+- [README](https://github.com/automatiqa-lab/risk-navigator/blob/main/README.md): the agents, the harness, setup, and how to run the reports and dashboard
+
+## More
+- [Automatiqa Lab](https://www.automati.qa/risk-navigator/): the project page
+- [Build logs](https://alxsidr.io): the thinking behind it
