@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Operations Risk Navigator"
+abstract: "A multi-agent system that monitors operational supply-chain risk across freight, fuel, labour, weather, and geopolitics, producing weekly briefings and a self-refreshing dashboard. Model-agnostic via LiteLLM."
+type: software
+authors:
+  - family-names: Sidorecs
+    given-names: Aleks
+repository-code: "https://github.com/automatiqa-lab/risk-navigator"
+url: "https://www.automati.qa/risk-navigator/"
+license: MIT
+keywords:
+  - multi-agent
+  - supply-chain
+  - risk-management
+  - litellm
+  - ocean-freight
+  - python
+date-released: 2026-06-26
