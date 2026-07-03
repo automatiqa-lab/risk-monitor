@@ -124,7 +124,7 @@ class StrikesAgent(BaseAgent):
         title_slide(
             s1,
             "Strikes & Disruptions Monitor",
-            f"Week of {self.date_str}  |  Operations Risk Navigator",
+            f"Week of {self.date_str}  |  Operations Risk Monitor",
             "Labour strikes · Port blockades · Customs slowdowns · Union disputes",
         )
 
@@ -149,7 +149,7 @@ class StrikesAgent(BaseAgent):
             paragraphs = [p.strip() for p in exec_summary.split("\n\n") if p.strip()]
             bullets(s1, 0.8, 2.8, 11.5, 3.5, paragraphs[:4], sz=11, bc=VF_BURG)
 
-        footer(s1, f"Operations Risk Navigator - Strikes Report - {self.date_str}")
+        footer(s1, f"Operations Risk Monitor - Strikes Report - {self.date_str}")
 
         # ── Slide 2: Active Disruptions by Region ────────────────────────
         s2 = add_blank_slide(prs)
@@ -176,7 +176,7 @@ class StrikesAgent(BaseAgent):
             if y > 6.5:
                 break
 
-        footer(s2, f"Operations Risk Navigator - Strikes Report - {self.date_str}")
+        footer(s2, f"Operations Risk Monitor - Strikes Report - {self.date_str}")
 
         # ── Slide 3: Trade Lane Impact Assessment ────────────────────────
         s3 = add_blank_slide(prs)
@@ -207,7 +207,7 @@ class StrikesAgent(BaseAgent):
             txt(s3, 9.2, y + 0.1, 3.5, 0.22, detail, sz=10, color=VF_DARK)
             y += 0.55
 
-        footer(s3, f"Operations Risk Navigator - Strikes Report - {self.date_str}")
+        footer(s3, f"Operations Risk Monitor - Strikes Report - {self.date_str}")
 
         # ── Slide 4: Forward Outlook ─────────────────────────────────────
         s4 = add_blank_slide(prs)
@@ -227,7 +227,7 @@ class StrikesAgent(BaseAgent):
         ]
         bullets(s4, 0.5, 1.5, 12, 4.0, outlook_items, sz=11, bc=VF_BURG)
 
-        footer(s4, f"Operations Risk Navigator - Strikes Report - {self.date_str}")
+        footer(s4, f"Operations Risk Monitor - Strikes Report - {self.date_str}")
 
         # ── Slide 5: Recommended Actions ─────────────────────────────────
         s5 = add_blank_slide(prs)
@@ -243,7 +243,7 @@ class StrikesAgent(BaseAgent):
         ]
         bullets(s5, 0.5, 1.2, 12, 5.0, actions, sz=11, bc=VF_GOLD)
 
-        footer(s5, f"Operations Risk Navigator - Strikes Report - {self.date_str}")
+        footer(s5, f"Operations Risk Monitor - Strikes Report - {self.date_str}")
 
         return {"pptx": prs}
 

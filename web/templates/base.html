@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>{% block title %}Operations Risk Navigator{% endblock %}</title>
+<title>{% block title %}Operations Risk Monitor{% endblock %}</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -74,7 +74,7 @@
 <body>
 
 <div class="topnav">
-  <div class="brand">Operations Risk Navigator</div>
+  <div class="brand">Operations Risk Monitor</div>
   <nav>
     <a href="/" {% if active_nav == 'dashboard' %}class="active"{% endif %}>Dashboard</a>
     <a href="/freight" {% if active_nav == 'freight' %}class="active"{% endif %}>Freight</a>
@@ -96,7 +96,7 @@
   {% block content %}{% endblock %}
 
   <div class="footer">
-    <span>Operations Risk Navigator</span>
+    <span>Operations Risk Monitor</span>
     <span>12 scrapers · Updated every 6 hours</span>
   </div>
 </div>

@@ -111,7 +111,7 @@ class CongestionAgent(BaseAgent):
         title_slide(
             s1,
             "Port Congestion Index",
-            f"Week of {self.date_str}  |  Operations Risk Navigator",
+            f"Week of {self.date_str}  |  Operations Risk Monitor",
             f"Monitoring {len(ports)} ports across 5 trade lanes  |  Sources: port authorities, MarineTraffic, carrier advisories",
         )
 
@@ -135,7 +135,7 @@ class CongestionAgent(BaseAgent):
             paragraphs = [p.strip() for p in exec_summary.split("\n\n") if p.strip()]
             bullets(s1, 0.8, 2.8, 11.5, 3.5, paragraphs[:4], sz=11, bc=VF_BURG)
 
-        footer(s1, f"Operations Risk Navigator - Congestion Report - {self.date_str}")
+        footer(s1, f"Operations Risk Monitor - Congestion Report - {self.date_str}")
 
         # ── Slide 2: Port Status Matrix ──────────────────────────────────
         s2 = add_blank_slide(prs)
@@ -172,7 +172,7 @@ class CongestionAgent(BaseAgent):
             if y > 6.8:
                 break
 
-        footer(s2, f"Operations Risk Navigator - Congestion Report - {self.date_str}")
+        footer(s2, f"Operations Risk Monitor - Congestion Report - {self.date_str}")
 
         # ── Slide 3: Regional Detail ─────────────────────────────────────
         s3 = add_blank_slide(prs)
@@ -199,7 +199,7 @@ class CongestionAgent(BaseAgent):
             if y > 6.5:
                 break
 
-        footer(s3, f"Operations Risk Navigator - Congestion Report - {self.date_str}")
+        footer(s3, f"Operations Risk Monitor - Congestion Report - {self.date_str}")
 
         # ── Slide 4: Schedule Reliability & Blank Sailings ───────────────
         s4 = add_blank_slide(prs)
@@ -215,7 +215,7 @@ class CongestionAgent(BaseAgent):
             txt(s4, 0.5, 1.2, 12, 0.3,
                 "No blank sailing or schedule reliability alerts this week.", sz=12, color=VF_TAN)
 
-        footer(s4, f"Operations Risk Navigator - Congestion Report - {self.date_str}")
+        footer(s4, f"Operations Risk Monitor - Congestion Report - {self.date_str}")
 
         # ── Slide 5: Recommended Actions ─────────────────────────────────
         s5 = add_blank_slide(prs)
@@ -231,7 +231,7 @@ class CongestionAgent(BaseAgent):
         ]
         bullets(s5, 0.5, 1.2, 12, 5.0, actions, sz=11, bc=VF_GOLD)
 
-        footer(s5, f"Operations Risk Navigator - Congestion Report - {self.date_str}")
+        footer(s5, f"Operations Risk Monitor - Congestion Report - {self.date_str}")
 
         return {"pptx": prs}
 

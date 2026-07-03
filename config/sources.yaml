@@ -1,4 +1,4 @@
-# Data sources for Operations Risk Navigator
+# Data sources for Operations Risk Monitor
 #
 # Shipping lines are scraped directly via Playwright (when --no-scrape is NOT set).
 # All other news is collected via targeted Google News searches - no feed URLs needed.
