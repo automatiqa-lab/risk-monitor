@@ -1,5 +1,5 @@
 """
-main.py - Operations Risk Navigator orchestrator.
+main.py - Operations Risk Monitor orchestrator.
 
 Routes to the appropriate agent based on --agent flag.
 Backwards-compatible: default is freight, --conflict still works.
@@ -39,7 +39,7 @@ def main() -> None:
     from agents.registry import AGENT_NAMES, get_agent, list_agents
 
     parser = argparse.ArgumentParser(
-        description="Operations Risk Navigator",
+        description="Operations Risk Monitor",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "agents:\n"
@@ -99,7 +99,7 @@ def main() -> None:
 
     # ── List mode ────────────────────────────────────────────────────────────
     if args.list:
-        print("Operations Risk Navigator - Available Agents:\n")
+        print("Operations Risk Monitor - Available Agents:\n")
         for name, desc in list_agents():
             status = "(stub)" if name == "cost" else ""
             print(f"  {name:<12} {desc} {status}")
@@ -113,7 +113,7 @@ def main() -> None:
         agents_to_run = [args.agent]
 
     logger.info(
-        "Operations Risk Navigator - running: %s",
+        "Operations Risk Monitor - running: %s",
         ", ".join(agents_to_run),
     )
 

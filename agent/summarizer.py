@@ -55,7 +55,7 @@ Write only the summary paragraph. No bullet points. No markdown. Plain prose."""
 
 _EXECUTIVE_PROMPT = """\
 You are a supply chain risk analyst writing the Weekly Briefing section \
-of the Operations Risk Navigator report, read by supply chain professionals.
+of the Operations Risk Monitor report, read by supply chain professionals.
 
 Below are this week's shortage signals and general alerts:
 

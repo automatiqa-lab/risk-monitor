@@ -1,1 +1,1 @@
-"""Scrapers for the Operations Risk Navigator."""
+"""Scrapers for the Operations Risk Monitor."""

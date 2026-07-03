@@ -3,7 +3,7 @@ FreightNewsAgent - Global Freight News.
 
 Thin wrapper over the existing agent/ pipeline. Produces HTML + Markdown + PDF.
 This agent is the original "Ocean Freight Weekly" pipeline, now part of the
-Operations Risk Navigator harness.
+Operations Risk Monitor harness.
 """
 from __future__ import annotations
 

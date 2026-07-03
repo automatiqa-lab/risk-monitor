@@ -1,4 +1,4 @@
-# Region definitions for Operations Risk Navigator
+# Region definitions for Operations Risk Monitor
 # Each region maps to countries, ports, and keywords used for article tagging.
 
 regions:

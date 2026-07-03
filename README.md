@@ -1,8 +1,8 @@
-# Operations Risk Navigator
+# Operations Risk Monitor
 
 A multi-agent system that watches operational risk across ocean freight, fuel, labour, weather, and geopolitics, then turns what it finds into briefings you can actually use. It runs two ways: a CLI that produces weekly reports (HTML, Markdown, PDF, PPTX), and a live dashboard that refreshes itself every few hours.
 
-Part of [Automatiqa Lab](https://www.automati.qa/risk-navigator/) - open-source experiments where operations meet the algorithm.
+Part of [Automatiqa Lab](https://www.automati.qa/risk-monitor/) - open-source experiments where operations meet the algorithm.
 
 The model behind the summaries is yours to choose. Everything routes through LiteLLM, so the same code runs on Anthropic, OpenAI, or a local Ollama model. You change one line in `config/settings.yaml` and set the matching API key.
 

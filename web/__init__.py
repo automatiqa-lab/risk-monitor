@@ -1,1 +1,1 @@
-"""Operations Risk Navigator - Web service."""
+"""Operations Risk Monitor - Web service."""

@@ -1,1 +1,1 @@
-"""Shared utilities for all Operations Risk Navigator agents."""
+"""Shared utilities for all Operations Risk Monitor agents."""

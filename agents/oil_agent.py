@@ -34,7 +34,7 @@ _ARTICLE_SYSTEM = (
 )
 _EXECUTIVE_SYSTEM = (
     "You are a marine fuel analyst writing the executive briefing for the "
-    "Operations Risk Navigator Global Oil report. "
+    "Operations Risk Monitor Global Oil report. "
     "Write exactly 3 paragraphs: (1) Current price action and supply status, "
     "(2) Bunkering hub and chokepoint disruptions, (3) Forward outlook and "
     "carrier surcharge trajectory. Plain prose, no markdown."
@@ -117,7 +117,7 @@ class OilNewsAgent(BaseAgent):
         title_slide(
             s1,
             "Global Marine Fuel Risk Report",
-            f"Week of {self.date_str}  |  Operations Risk Navigator",
+            f"Week of {self.date_str}  |  Operations Risk Monitor",
             "Sources: Ship & Bunker, Enterprise Singapore, S&P Global Platts, Argus, ENGINE",
         )
 
@@ -126,7 +126,7 @@ class OilNewsAgent(BaseAgent):
             paragraphs = [p.strip() for p in exec_summary.split("\n\n") if p.strip()]
             bullets(s1, 0.8, 1.6, 11.5, 4.0, paragraphs[:6], sz=11, bc=VF_BURG)
 
-        footer(s1, f"Operations Risk Navigator - Oil Report - {self.date_str}")
+        footer(s1, f"Operations Risk Monitor - Oil Report - {self.date_str}")
 
         # ── Slide 2: Key Articles ────────────────────────────────────────
         s2 = add_blank_slide(prs)
@@ -143,7 +143,7 @@ class OilNewsAgent(BaseAgent):
             if y > 6.8:
                 break
 
-        footer(s2, f"Operations Risk Navigator - Oil Report - {self.date_str}")
+        footer(s2, f"Operations Risk Monitor - Oil Report - {self.date_str}")
 
         # ── Slide 3: Risk Signals ────────────────────────────────────────
         s3 = add_blank_slide(prs)
@@ -174,7 +174,7 @@ class OilNewsAgent(BaseAgent):
             items = [f"[{a.regions[0] if a.regions else 'Global'}] {a.summary or a.title}"[:120] for a in positive[:4]]
             bullets(s3, 0.5, y, 12, 1.5, items, sz=10, bc=STABLE_GRN)
 
-        footer(s3, f"Operations Risk Navigator - Oil Report - {self.date_str}")
+        footer(s3, f"Operations Risk Monitor - Oil Report - {self.date_str}")
 
         # ── Slide 4: Forward Scenarios ───────────────────────────────────
         s4 = add_blank_slide(prs)
@@ -206,7 +206,7 @@ class OilNewsAgent(BaseAgent):
             "Update with actual price data when available.",
             sz=9, color=VF_TAN)
 
-        footer(s4, f"Operations Risk Navigator - Oil Report - {self.date_str}")
+        footer(s4, f"Operations Risk Monitor - Oil Report - {self.date_str}")
 
         # ── Slide 5: Recommended Actions ─────────────────────────────────
         s5 = add_blank_slide(prs)
@@ -222,7 +222,7 @@ class OilNewsAgent(BaseAgent):
         ]
         bullets(s5, 0.5, 1.2, 12, 5.0, actions, sz=11, bc=VF_GOLD)
 
-        footer(s5, f"Operations Risk Navigator - Oil Report - {self.date_str}")
+        footer(s5, f"Operations Risk Monitor - Oil Report - {self.date_str}")
 
         return {"pptx": prs}
 

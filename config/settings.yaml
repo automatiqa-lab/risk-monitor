@@ -1,4 +1,4 @@
-# General settings for Operations Risk Navigator
+# General settings for Operations Risk Monitor
 
 agent:
   # How many articles per region to include in the newsletter
@@ -35,7 +35,7 @@ scraping:
   retry_delay_seconds: 5
   # Respectful crawl delay between requests (seconds)
   crawl_delay_seconds: 2
-  user_agent: "OpsRiskNavigator/1.0 (internal research tool)"
+  user_agent: "OpsRiskMonitor/1.0 (internal research tool)"
 
 email:
   # Phase 2 - leave empty for now
@@ -43,7 +43,7 @@ email:
   smtp_host: ""
   smtp_port: 587
   from_address: ""
-  subject_template: "Operations Risk Navigator - {date}"
+  subject_template: "Operations Risk Monitor - {date}"
   recipients: []
 
 cache:
