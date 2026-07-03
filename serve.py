@@ -1,5 +1,5 @@
 """
-Entry point for the Operations Risk Navigator web service.
+Entry point for the Operations Risk Monitor web service.
 
 Usage:
     python serve.py                  # Dev server on port 8000
@@ -27,7 +27,7 @@ logging.basicConfig(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Operations Risk Navigator - Web Service")
+    parser = argparse.ArgumentParser(description="Operations Risk Monitor - Web Service")
     parser.add_argument("--port", type=int, default=8000, help="Port to serve on (default: 8000)")
     parser.add_argument("--host", type=str, default="0.0.0.0", help="Host to bind to")
     parser.add_argument("--scrape-now", action="store_true", help="Run all scrapers before starting")

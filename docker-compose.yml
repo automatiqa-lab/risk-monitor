@@ -1,9 +1,9 @@
 version: "3.8"
 
 services:
-  ops-risk-navigator:
+  ops-risk-monitor:
     build: .
-    container_name: ops-risk-navigator
+    container_name: ops-risk-monitor
     restart: unless-stopped
     ports:
       - "127.0.0.1:8003:8000"
@@ -18,10 +18,10 @@ services:
     labels:
       # Adjust the host rule to your own domain before deploying.
       - "traefik.enable=true"
-      - "traefik.http.routers.ops-risk-navigator.rule=Host(`your-domain.example`)"
-      - "traefik.http.routers.ops-risk-navigator.entrypoints=websecure"
-      - "traefik.http.routers.ops-risk-navigator.tls.certresolver=letsencrypt"
-      - "traefik.http.services.ops-risk-navigator.loadbalancer.server.port=8000"
+      - "traefik.http.routers.ops-risk-monitor.rule=Host(`your-domain.example`)"
+      - "traefik.http.routers.ops-risk-monitor.entrypoints=websecure"
+      - "traefik.http.routers.ops-risk-monitor.tls.certresolver=letsencrypt"
+      - "traefik.http.services.ops-risk-monitor.loadbalancer.server.port=8000"
     networks:
       - traefik-proxy
 

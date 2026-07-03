@@ -1,5 +1,5 @@
 """
-FastAPI app for Operations Risk Navigator.
+FastAPI app for Operations Risk Monitor.
 Serves the live dashboard and the JSON endpoints behind it.
 """
 from __future__ import annotations
@@ -19,10 +19,10 @@ from web.database import (
     get_recent_alerts, get_scraper_runs,
 )
 
-logger = logging.getLogger("ops_risk_navigator.web")
+logger = logging.getLogger("ops_risk_monitor.web")
 
 app = FastAPI(
-    title="Operations Risk Navigator",
+    title="Operations Risk Monitor",
     description="Multi-agent supply chain and operations risk monitoring",
     version="1.0.0",
 )
@@ -533,4 +533,4 @@ async def scraper_status():
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "service": "ops-risk-navigator", "version": "1.0.0"}
+    return {"status": "ok", "service": "ops-risk-monitor", "version": "1.0.0"}

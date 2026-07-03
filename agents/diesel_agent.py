@@ -118,7 +118,7 @@ class DieselRisksAgent(BaseAgent):
             paragraphs = [p.strip() for p in exec_summary.split("\n\n") if p.strip()]
             bullets(s1, 0.8, 2.6, 11.5, 3.5, paragraphs[:4], sz=11, bc=VF_BURG)
 
-        footer(s1, f"Operations Risk Navigator - Diesel Report - {self.date_str}")
+        footer(s1, f"Operations Risk Monitor - Diesel Report - {self.date_str}")
 
         # ── Slide 2: Key Articles ────────────────────────────────────────
         s2 = add_blank_slide(prs)
@@ -135,7 +135,7 @@ class DieselRisksAgent(BaseAgent):
             if y > 6.8:
                 break
 
-        footer(s2, f"Operations Risk Navigator - Diesel Report - {self.date_str}")
+        footer(s2, f"Operations Risk Monitor - Diesel Report - {self.date_str}")
 
         # ── Slide 3: Supply Chain Risk Register ──────────────────────────
         s3 = add_blank_slide(prs)
@@ -164,7 +164,7 @@ class DieselRisksAgent(BaseAgent):
             txt(s3, 2.2, y + 0.38, 10, 0.4, desc, sz=10, color=VF_DARK)
             y += 1.0
 
-        footer(s3, f"Operations Risk Navigator - Diesel Report - {self.date_str}")
+        footer(s3, f"Operations Risk Monitor - Diesel Report - {self.date_str}")
 
         # ── Slide 4: Forward Scenarios ───────────────────────────────────
         s4 = add_blank_slide(prs)
@@ -189,7 +189,7 @@ class DieselRisksAgent(BaseAgent):
             "Emergency price controls create grey markets.",
             RED_ALERT)
 
-        footer(s4, f"Operations Risk Navigator - Diesel Report - {self.date_str}")
+        footer(s4, f"Operations Risk Monitor - Diesel Report - {self.date_str}")
 
         # ── Slide 5: Recommended Actions ─────────────────────────────────
         s5 = add_blank_slide(prs)
@@ -205,7 +205,7 @@ class DieselRisksAgent(BaseAgent):
         ]
         bullets(s5, 0.5, 1.2, 12, 5.0, actions, sz=11, bc=VF_GOLD)
 
-        footer(s5, f"Operations Risk Navigator - Diesel Report - {self.date_str}")
+        footer(s5, f"Operations Risk Monitor - Diesel Report - {self.date_str}")
 
         return {"pptx": prs}
 

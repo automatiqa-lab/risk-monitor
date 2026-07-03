@@ -1,4 +1,4 @@
-# Operations Risk Navigator - Python dependencies
+# Operations Risk Monitor - Python dependencies
 
 # Model-agnostic LLM gateway (Anthropic, OpenAI, Ollama, ... via one call)
 litellm>=1.40.0

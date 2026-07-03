@@ -1,5 +1,5 @@
 """
-SQLite database for the Operations Risk Navigator.
+SQLite database for the Operations Risk Monitor.
 Stores scraped data points, articles, alerts, and module status.
 """
 from __future__ import annotations

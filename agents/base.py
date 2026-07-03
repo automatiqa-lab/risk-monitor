@@ -70,7 +70,7 @@ class AgentResult:
 
 
 class BaseAgent(ABC):
-    """Contract that every Operations Risk Navigator agent implements."""
+    """Contract that every Operations Risk Monitor agent implements."""
 
     name: str = ""             # e.g. "freight", "oil", "diesel"
     description: str = ""      # Human-readable label
