@@ -102,3 +102,7 @@ tests/      pytest suite
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+---
+
+Automatiqa Lab by Aleks Sidorecs · automate@automati.qa
