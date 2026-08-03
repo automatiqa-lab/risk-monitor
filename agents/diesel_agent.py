@@ -78,7 +78,9 @@ class DieselRisksAgent(BaseAgent):
     ) -> tuple[List[Article], str]:
         settings_wrapper = {"llm": config["agent"].get("llm", {})}
         summarized = summarize_all(articles, settings_wrapper)
-        exec_summary = generate_executive_summary(summarized)
+        exec_summary, self.exec_summary_source = generate_executive_summary(
+            summarized, return_source=True
+        )
         return summarized, exec_summary
 
     def compose(
@@ -93,7 +95,7 @@ class DieselRisksAgent(BaseAgent):
         )
         from pptx.enum.text import PP_ALIGN
 
-        prs = create_presentation()
+        prs = create_presentation(disclosure=self.disclosure_envelope(articles))
         countries = config["agent"].get("countries", [])
 
         # ── Slide 1: Title + KPI Dashboard ───────────────────────────────

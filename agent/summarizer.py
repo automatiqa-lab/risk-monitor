@@ -104,6 +104,9 @@ def summarize_article(
 
     summary = _complete(prompt, model=model, max_tokens=max_tokens)
     article.summary = summary
+    # Provenance recorded at the point of creation - this is the only place in
+    # the codebase that may set it to "model". See shared/disclosure.py.
+    article.summary_source = "model"
     return summary
 
 
@@ -136,6 +139,7 @@ def summarize_all(
         except Exception as exc:
             logger.error("Failed to summarize '%s': %s", article.title[:60], exc)
             article.summary = article.title  # fall back to the headline
+            article.summary_source = "scraped"  # the headline is source text, not AI output
 
         if i < len(to_summarize):
             time.sleep(delay)
@@ -147,10 +151,24 @@ def generate_executive_summary(
     articles: List[Article],
     model: str = DEFAULT_MODEL,
     max_tokens: int = 600,
-) -> str:
-    """Write the 3-paragraph Weekly Briefing from the shortage and general signals."""
+    return_source: bool = False,
+):
+    """Write the 3-paragraph Weekly Briefing from the shortage and general signals.
+
+    With ``return_source=True`` returns ``(text, source)`` where source is "model"
+    when the LLM wrote it and "scraped" when a canned fallback string was used.
+    The two fallbacks below are hand-written English, not model output, so
+    marking them as AI-generated would be false. Callers that need to mark the
+    report opt in; the plain string return stays backwards compatible.
+    """
+    def _out(text: str, source: str):
+        return (text, source) if return_source else text
+
     if not articles:
-        return "No significant ocean freight developments were identified this week."
+        return _out(
+            "No significant ocean freight developments were identified this week.",
+            "scraped",
+        )
 
     lines: List[str] = []
 
@@ -178,7 +196,10 @@ def generate_executive_summary(
     prompt = _EXECUTIVE_PROMPT.format(summaries_block=summaries_block)
 
     try:
-        return _complete(prompt, model=model, max_tokens=max_tokens)
+        return _out(_complete(prompt, model=model, max_tokens=max_tokens), "model")
     except Exception as exc:
         logger.error("Failed to generate executive summary: %s", exc)
-        return "This week's ocean freight newsletter covers developments across key trade regions."
+        return _out(
+            "This week's ocean freight newsletter covers developments across key trade regions.",
+            "scraped",
+        )

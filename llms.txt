@@ -6,7 +6,14 @@ The model behind the summaries is yours to choose: everything routes through Lit
 
 ## Docs
 - [README](https://github.com/automatiqa-lab/risk-monitor/blob/main/README.md): the agents, the harness, setup, and how to run the reports and dashboard
+- [COMPLIANCE](https://github.com/automatiqa-lab/risk-monitor/blob/main/COMPLIANCE.md): EU AI Act role classification, Annex III screening, and where the marking sits
+
+## License and provenance
+
+MIT licensed, copyright 2026 Aleks Sidorecs. Upstream model providers are listed in [NOTICE](https://github.com/automatiqa-lab/risk-monitor/blob/main/NOTICE) - the lab does not train or distribute models, and is not a GPAI provider under the EU AI Act.
+
+Output is marked under EU AI Act Article 50. Two kinds of text in a report are model-written: the per-article summaries and the executive briefing. Both carry machine-readable marking under the `automatiqa-disclosure/1` schema - HTML meta tags, Markdown front matter, PDF info dictionary and XMP, PPTX core properties, and an `ai_generated` envelope with an `X-AI-Generated` header on the JSON endpoints. Headlines, dates, figures, source names and links are reproduced unmodified from the sources and are not marked. A report containing no model-written text carries no marking at all, so the absence of an envelope is itself a claim you can rely on. Full reasoning in [COMPLIANCE.md](https://github.com/automatiqa-lab/risk-monitor/blob/main/COMPLIANCE.md).
 
 ## More
-- [Automatiqa Lab](https://www.automati.qa/risk-monitor/): the project page
-- [Build logs](https://alxsidr.io): the thinking behind it
+- [Automatiqa Lab](https://www.automatiqa.io/risk-monitor/): the project page
+- [Build logs](https://www.automatiqa.io/tag/build-log/): the thinking behind it

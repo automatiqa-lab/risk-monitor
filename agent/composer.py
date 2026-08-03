@@ -13,6 +13,7 @@ from typing import List, Tuple
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from agent.rss_aggregator import Article
+from shared import disclosure
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +65,9 @@ def _article_to_dict(article: Article) -> dict:
         "source": article.source,
         "published_date": _format_date(article.published_date),
         "summary": article.summary or article.title,
+        # Per-item provenance chip. A headline fallback carries "source text",
+        # not an AI label - see shared/disclosure.py.
+        **disclosure.item_marking(article),
     }
 
 
@@ -73,13 +77,19 @@ def build_template_context(
     regions_config: dict,
     sources_config: dict,
     settings: dict,
+    exec_summary_source: str = "model",
 ) -> dict:
     """
     Transform flat article list + config into the nested dict expected
     by the Jinja2 templates.
 
     Returns a dict with keys: week_label, generated_at, executive_summary,
-    regions, carriers, container_watch, sources_consulted.
+    regions, carriers, container_watch, sources_consulted, disclosure.
+
+    ``exec_summary_source`` says who wrote the executive briefing: "model" when
+    the summarizer produced it, "scraped" when it came from a hand-written
+    briefing file. It feeds the Art. 50 marking, which is emitted only when
+    something in the report was actually model-written.
     """
     now = datetime.now(timezone.utc)
     agent_cfg: dict = settings.get("agent", {})
@@ -151,6 +161,7 @@ def build_template_context(
             "summary": article.summary or article.title,
             "url": article.url,
             "source": article.source,
+            **disclosure.item_marking(article),
         }
         if article.container_signal == "shortage":
             container_shortage.append(item)
@@ -176,6 +187,14 @@ def build_template_context(
                 "url": article.url,  # Best available link for this source
             })
 
+    # ── Art. 50 marking ───────────────────────────────────────────────────────
+    # None when nothing in this report was model-written, in which case the
+    # templates render no meta tags, no front matter and no footer sentence.
+    env = disclosure.report_envelope(
+        articles,
+        exec_summary_source=exec_summary_source if executive_summary else None,
+    )
+
     return {
         "week_label": week_label,
         "generated_at": generated_at,
@@ -185,6 +204,8 @@ def build_template_context(
         "container_watch": container_watch,
         "sources_consulted": sources_consulted,
         "logo_src": _load_logo_data_url(),
+        "disclosure": disclosure.template_block(env),
+        "ai_envelope": env,
     }
 
 
@@ -202,13 +223,20 @@ def render_markdown(context: dict) -> str:
     return template.render(**context)
 
 
-async def render_pdf(html_path: Path, pdf_path: Path) -> None:
+async def render_pdf(html_path: Path, pdf_path: Path, ai_envelope: dict | None = None) -> None:
     """
     Render the HTML newsletter to PDF using Playwright (Chromium).
+
+    Playwright's page.pdf() has no metadata API, so the Art. 50 marking is
+    written afterwards as an incremental PyMuPDF save: document information
+    dictionary plus an XMP packet, rendered pages untouched. Pass the envelope
+    from build_template_context under "ai_envelope"; None means no marking,
+    which is the correct output for a report with no model-written text.
 
     Args:
         html_path: Absolute path to the saved HTML file.
         pdf_path: Destination path for the PDF file.
+        ai_envelope: Disclosure envelope, or None.
     """
     from playwright.async_api import async_playwright
 
@@ -223,6 +251,9 @@ async def render_pdf(html_path: Path, pdf_path: Path) -> None:
             print_background=True,
         )
         await browser.close()
+
+    if disclosure.mark_pdf(pdf_path, ai_envelope):
+        logger.info("PDF marked as AI-assisted: %s", pdf_path)
     logger.info("PDF saved: %s", pdf_path)
 
 
