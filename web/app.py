@@ -79,15 +79,13 @@ def _page_disclosure(*item_groups):
     tags, no chips. That is the point: the marking appears if and only if a
     model actually wrote something on the page.
 
-    The report footer sentence is dropped here on purpose. It talks about an
-    executive summary and article summaries, which is accurate on a briefing and
-    wrong on a dashboard. The per-row chip is the human-readable channel on these
-    pages; the meta tags are the machine-readable one.
+    These pages carry the dashboard wording, not the briefing footer: the briefing
+    sentence names an executive summary and article summaries, which is accurate on
+    a report and false here. Both live in disclosure.yaml, so the difference is a
+    reviewed decision rather than a branch in this file.
     """
     items = [item for group in item_groups for item in (group or [])]
-    block = disclosure.template_block(disclosure.report_envelope(items))
-    block["footer"] = ""
-    return block
+    return disclosure.template_block(disclosure.report_envelope(items), surface="dashboard")
 
 
 @app.get("/", response_class=HTMLResponse)

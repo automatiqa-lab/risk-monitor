@@ -219,8 +219,17 @@ def already_marked(payload: Mapping[str, Any]) -> bool:
 # ── Per-format emitters ──────────────────────────────────────────────────────
 
 def report_footer(env: Mapping[str, Any] | None) -> str:
-    """The human-readable sentence. Empty when nothing was model-generated."""
+    """The human-readable sentence for a briefing. Empty when nothing was model-generated."""
     return wording("report.footer") if env else ""
+
+
+def dashboard_footer(env: Mapping[str, Any] | None) -> str:
+    """The same claim worded for a dashboard, where there is no executive summary.
+
+    Kept in the config rather than branched in code: a sentence that carries a legal
+    claim should be reviewable in one file, not assembled from conditionals.
+    """
+    return wording("report.dashboard_footer") if env else ""
 
 
 def mark_json(payload: dict[str, Any], env: Mapping[str, Any] | None) -> dict[str, Any]:
@@ -300,17 +309,19 @@ def xmp(env: Mapping[str, Any] | None) -> str:
     )
 
 
-def template_block(env: Mapping[str, Any] | None) -> dict[str, Any]:
+def template_block(env: Mapping[str, Any] | None, *, surface: str = "report") -> dict[str, Any]:
     """Everything a Jinja template needs, in one context key.
 
     Templates stay free of disclosure logic: they render what is here, and get an
-    empty block when nothing was generated.
+    empty block when nothing was generated. `surface` picks which wording applies -
+    a briefing names its executive summary, a dashboard names its chips.
     """
+    footer = dashboard_footer(env) if surface == "dashboard" else report_footer(env)
     return {
         "envelope": dict(env) if env else None,
         "html_meta": html_meta(env),
         "front_matter": markdown_front_matter(env),
-        "footer": report_footer(env),
+        "footer": footer,
         "item_chip": item_chip(),
         "source_chip": source_chip(),
     }

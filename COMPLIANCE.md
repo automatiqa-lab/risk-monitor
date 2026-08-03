@@ -143,6 +143,7 @@ and it is a different classification.
 
 | Date | Decision | Why |
 |---|---|---|
+| 2026-08-03 | Dashboard pages carry their own disclosure sentence, not the briefing footer. | The briefing sentence names an executive summary and article summaries, which is false on a dashboard. Both strings live in `config/disclosure.yaml` so the difference is a reviewed decision rather than a branch in code, and neither surface ends up silent. |
 | 2026-08-03 | Classified as provider, not template publisher | Ships as a complete running system under the lab's name, not a workflow someone assembles |
 | 2026-08-03 | Art. 50(1) recorded as not applicable | No conversational surface; every output is an artefact, which is 50(2) territory |
 | 2026-08-03 | Added `summary_source` to `Article` and to the `articles` table | One column held both model and scraped text; uniform marking would have been false in both directions |
