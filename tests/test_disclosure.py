@@ -525,3 +525,35 @@ class TestWording:
         cfg = disclosure.load_config(Path(disclosure.CONFIG_PATH))
         assert cfg["schema"] == disclosure.SCHEMA
         assert cfg["version"] == 1
+
+
+class TestSurfaceWording:
+    """A briefing and a dashboard make the same claim in different words.
+
+    Both sentences live in disclosure.yaml. The point of the surface argument is that
+    neither page ends up silent, and that the wording stays reviewable in one file.
+    """
+
+    def test_report_surface_names_the_executive_summary(self):
+        env = disclosure.envelope(scope=["article_summaries"], drafted=1, total=2)
+        block = disclosure.template_block(env, surface="report")
+        assert "executive summary" in block["footer"]
+
+    def test_dashboard_surface_names_the_chips_instead(self):
+        env = disclosure.envelope(scope=["article_summaries"], drafted=1, total=2)
+        block = disclosure.template_block(env, surface="dashboard")
+        assert block["footer"] != ""
+        assert "executive summary" not in block["footer"]
+        assert "drafted by AI" in block["footer"]
+
+    def test_neither_surface_speaks_when_nothing_was_generated(self):
+        for surface in ("report", "dashboard"):
+            block = disclosure.template_block(None, surface=surface)
+            assert block["footer"] == ""
+            assert block["html_meta"] == ""
+
+    def test_dashboard_footer_does_not_name_the_model(self):
+        env = disclosure.envelope(scope=["article_summaries"], drafted=1, total=2)
+        footer = disclosure.dashboard_footer(env)
+        assert "claude" not in footer.lower()
+        assert "gpt" not in footer.lower()
