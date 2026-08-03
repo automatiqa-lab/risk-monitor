@@ -1,0 +1,34 @@
+Operations Risk Monitor
+Copyright 2026 Automatiqa Lab by Aleks Sidorecs <aleks@automatiqa.io>
+
+This product includes software developed as part of the Automatiqa Lab
+(https://www.automatiqa.io/risk-monitor/).
+
+Licensed under the MIT License. See LICENSE.
+
+## Upstream models
+
+Operations Risk Monitor sends prompts to a language model chosen by whoever runs it. The model is
+one line in config/settings.yaml under llm.model, routed through LiteLLM, and the matching key
+comes from the operator's own environment. The lab does not train, fine-tune or distribute models,
+and is not a provider of a general-purpose AI model under the EU AI Act. Obligations for the models
+themselves sit with their providers, under their own terms:
+
+- Anthropic (Claude) - https://www.anthropic.com/legal/commercial-terms
+  Default configuration. Needs ANTHROPIC_API_KEY.
+- OpenAI - https://openai.com/policies/terms-of-use
+  Selected by setting llm.model to a gpt-* string. Needs OPENAI_API_KEY.
+- Locally run open-weight models, for example via Ollama - under their own model licences
+  Selected by setting llm.model to ollama/<name> and LLM_API_BASE to the local endpoint. No key
+  leaves the machine. Set include_model: false in config/disclosure.yaml if you would rather the
+  local model name did not travel in output metadata.
+
+Any other provider LiteLLM speaks will work the same way, and the same split applies: the model is
+its provider's responsibility, the marking of what comes back is ours.
+
+Output produced with these models is marked per EU AI Act Article 50. See COMPLIANCE.md.
+
+## Bundled third-party material
+
+None. Runtime dependencies are declared in requirements.txt and install from PyPI under their own
+licences. The brand logo at input/logo@2x.png, when present, is supplied by the operator.

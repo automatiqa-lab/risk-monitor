@@ -93,15 +93,42 @@ pytest tests/ -v
 agent/      collection, filtering, summarizing, composing (the freight pipeline)
 agents/     the multi-agent harness: base class, registry, per-agent logic + config
 web/        FastAPI app, scheduler, scrapers, SQLite, templates
-shared/     PPTX builders shared across the slide-deck agents
-config/     sources, regions, and settings as YAML
+shared/     PPTX builders and the Art. 50 disclosure layer (disclosure.py)
+config/     sources, regions, settings, and disclosure wording as YAML
 templates/  Jinja2 templates for the freight HTML/Markdown reports
 tests/      pytest suite
 ```
 
+## EU AI Act
+
+Operations Risk Monitor writes summaries with a language model, so its output carries transparency
+marking under Article 50.
+
+- Content the model wrote is marked, and content it did not write is left alone. Two paths write
+  the `summary` field - the CLI pipeline calls the model, the dashboard pipeline deliberately
+  skips it - so every article carries a `summary_source` of `model` or `scraped`, recorded when the
+  text is created. Marking reads that field rather than guessing from the text.
+- Marking travels in two channels: a line you can read, and metadata a machine can detect. HTML
+  `<meta>` tags, Markdown YAML front matter, the PDF info dictionary plus an XMP packet, PPTX core
+  properties, and an `ai_generated` envelope with an `X-AI-Generated` header on the JSON endpoints
+  that return summaries. The schema is `automatiqa-disclosure/1`.
+- A report with no model-written text carries no marking and no disclosure footer. The absence is
+  informative, which is what makes the presence worth trusting.
+- The model is never named in visible output. Article 50 requires disclosing that content is
+  AI-generated, not which system produced it. It does travel in file metadata, because you choose
+  the model yourself - set `include_model: false` in `config/disclosure.yaml` to turn that off.
+- Wording lives in `config/disclosure.yaml`, so it changes in one place.
+
+If you deploy this for other people in the EU you are a deployer: keep the marking intact, make
+sure recipients can recognise AI-generated content as such, and secure the dashboard, which ships
+unauthenticated on purpose.
+
+Full classification and reasoning: [COMPLIANCE.md](COMPLIANCE.md). Upstream model providers:
+[NOTICE](NOTICE).
+
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE). Attribution and upstream model providers: [NOTICE](NOTICE).
 
 ---
 
