@@ -45,6 +45,10 @@ class Article:
     published_date: datetime
     raw_text: str = ""
     summary: str = ""                   # Filled in by summarizer later
+    # Provenance of `summary`: "model" once the LLM wrote it, "scraped" while it
+    # still holds source text or the headline. Drives AI Act Art. 50 marking, so
+    # it defaults to "scraped" - we never claim model authorship we cannot prove.
+    summary_source: str = "scraped"
     regions: List[str] = field(default_factory=list)
     container_signal: Optional[str] = None  # "shortage" | "surplus" | "general" | None
 

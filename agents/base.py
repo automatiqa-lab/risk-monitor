@@ -75,6 +75,12 @@ class BaseAgent(ABC):
     name: str = ""             # e.g. "freight", "oil", "diesel"
     description: str = ""      # Human-readable label
 
+    # Who wrote the executive briefing on the last summarize() call: "model" when
+    # the LLM produced it, "scraped" when it came from a hand-written file or a
+    # canned fallback. summarize() overwrites this; the default only covers
+    # agents that never set it.
+    exec_summary_source: str = "model"
+
     def __init__(
         self,
         date_str: Optional[str] = None,
@@ -122,6 +128,20 @@ class BaseAgent(ABC):
     def save(self, artifacts: Dict[str, Any], config: Dict[str, Any]) -> List[Path]:
         """Step 5: Write output files. Returns list of saved file paths."""
         ...
+
+    # ── Disclosure (EU AI Act Art. 50) ───────────────────────────────────────
+
+    def disclosure_envelope(self, articles: List[Article]) -> Optional[Dict[str, Any]]:
+        """Machine-readable marking for an artifact built from these articles.
+
+        Returns None when nothing in the artifact was written by the model - a
+        dry run, an empty week, or a pipeline that skipped the LLM. Callers pass
+        the result straight to create_presentation() or render_pdf(), both of
+        which treat None as "emit no marking".
+        """
+        from shared.disclosure import report_envelope
+
+        return report_envelope(articles, exec_summary_source=self.exec_summary_source)
 
     # ── Full pipeline (batch/CLI - with LLM summaries + PPTX generation) ─────
 
@@ -202,6 +222,10 @@ class BaseAgent(ABC):
                 regions, signal,
                 a.summary or "", a.raw_text or "",
                 a.published_date.isoformat() if a.published_date else "",
+                # This path deliberately skips the LLM, so whatever sits in
+                # `summary` is scraped source text. Recording that here is what
+                # keeps the dashboard from claiming AI authorship it does not have.
+                summary_source=getattr(a, "summary_source", "scraped"),
             )
             count += 1
 

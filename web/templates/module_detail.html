@@ -85,7 +85,7 @@
         {% if a.signal == 'shortage' %}{% set sclass = 'critical' %}{% elif a.signal == 'general' %}{% set sclass = 'high' %}{% elif a.signal == 'surplus' %}{% set sclass = 'positive' %}{% else %}{% set sclass = '' %}{% endif %}
         <div class="signal-card {{ sclass }}">
           <div class="s-title">{{ a.title }}</div>
-          {% if a.summary %}<div class="s-summary">{{ a.summary[:300] }}</div>{% endif %}
+          {% if a.summary %}<div class="s-summary">{{ a.summary[:300] }}</div>{% endif %}{% if a.summary_source == "model" %}<span class="ai-chip">{{ disclosure.item_chip }}</span>{% endif %}
           <div class="s-meta">
             {% if a.source %}<span class="s-source">{{ a.source }}</span>{% endif %}
             {% if a.region %}<span class="s-region">{{ a.region|upper }}</span>{% endif %}

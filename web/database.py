@@ -47,6 +47,11 @@ def init_db():
             region TEXT DEFAULT '',
             signal TEXT DEFAULT '',
             summary TEXT DEFAULT '',
+            -- Provenance of `summary`: 'model' when an LLM wrote it, 'scraped'
+            -- when it is source text or a headline. The column holds both kinds
+            -- because run_for_dashboard() skips the LLM, so nothing downstream
+            -- may assume one or the other. Drives EU AI Act Art. 50 marking.
+            summary_source TEXT DEFAULT 'scraped',
             raw_text TEXT DEFAULT '',
             published_at TEXT,
             scraped_at TEXT DEFAULT (datetime('now')),
@@ -104,24 +109,51 @@ def init_db():
         CREATE INDEX IF NOT EXISTS idx_metrics_key ON metrics(metric_key, module);
         CREATE INDEX IF NOT EXISTS idx_alerts_created ON alerts(created_at);
         """)
+        _migrate(db)
+
+
+def _migrate(db) -> None:
+    """Bring an existing database up to the current schema.
+
+    Additive only, and safe to run on every startup.
+
+    summary_source: existing rows default to 'scraped'. They were written before
+    the column existed, by a mix of the LLM path and the dashboard path, and
+    there is no record of which. Claiming model authorship we cannot prove would
+    be the worse error of the two, so they are backfilled as source text.
+    """
+    columns = {row[1] for row in db.execute("PRAGMA table_info(articles)").fetchall()}
+    if "summary_source" not in columns:
+        db.execute("ALTER TABLE articles ADD COLUMN summary_source TEXT DEFAULT 'scraped'")
+        db.execute("UPDATE articles SET summary_source = 'scraped' WHERE summary_source IS NULL")
 
 
 def upsert_article(db, title, url, source, module, region="", signal="",
-                    summary="", raw_text="", published_at=None):
-    """Insert or update an article - refresh scraped_at on every cycle."""
+                    summary="", raw_text="", published_at=None,
+                    summary_source="scraped"):
+    """Insert or update an article - refresh scraped_at on every cycle.
+
+    `summary_source` is 'model' only when an LLM wrote `summary`. Every scraper
+    leaves the default, because none of them call a model. Pass it explicitly
+    rather than inferring it downstream: provenance is a fact about how the row
+    was created, and it cannot be recovered from the text.
+    """
     db.execute("""
-        INSERT INTO articles (title, url, source, module, region, signal, summary, raw_text, published_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO articles (title, url, source, module, region, signal, summary,
+                              summary_source, raw_text, published_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(title, module) DO UPDATE SET
             url = excluded.url,
             source = excluded.source,
             region = excluded.region,
             signal = excluded.signal,
             summary = excluded.summary,
+            summary_source = excluded.summary_source,
             raw_text = excluded.raw_text,
             published_at = excluded.published_at,
             scraped_at = datetime('now')
-    """, (title, url, source, module, region, signal, summary, raw_text, published_at))
+    """, (title, url, source, module, region, signal, summary,
+          summary_source, raw_text, published_at))
 
 
 def insert_metric(db, metric_key, module, value, unit="", label="", source=""):

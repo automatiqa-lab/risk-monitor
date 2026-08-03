@@ -17,6 +17,7 @@ from agent.rss_aggregator import Article, fetch_google_news
 from agent.filter import apply_filters
 from agent.summarizer import summarize_all
 from agent.manual_loader import load_manual_articles, load_weekly_briefing
+from shared import disclosure
 
 logger = logging.getLogger(__name__)
 
@@ -95,6 +96,7 @@ def _article_to_dict(article: Article) -> dict:
         "source": article.source,
         "published_date": _format_date(article.published_date),
         "summary": article.summary or article.title,
+        **disclosure.item_marking(article),
     }
 
 
@@ -104,8 +106,15 @@ def build_conflict_context(
     regions_config: dict,
     sources_config: dict,
     settings: dict,
+    exec_summary_source: str = "scraped",
 ) -> dict:
-    """Build the template context for the conflict-focused newsletter."""
+    """Build the template context for the conflict-focused newsletter.
+
+    The situation assessment in this brief is hand-written (input/
+    conflict_articles.yaml) or a canned line, never model output, so
+    exec_summary_source defaults to "scraped" here. Only the per-article
+    summaries come from the model.
+    """
     now = datetime.now(timezone.utc)
     agent_cfg: dict = settings.get("agent", {})
     max_per_carrier: int = agent_cfg.get("max_articles_per_carrier", 3)
@@ -162,6 +171,7 @@ def build_conflict_context(
             "summary": article.summary or article.title,
             "url": article.url,
             "source": article.source,
+            **disclosure.item_marking(article),
         }
         if article.container_signal == "shortage":
             risk_high.append(item)
@@ -188,6 +198,12 @@ def build_conflict_context(
             })
 
     from agent.composer import _load_logo_data_url
+
+    env = disclosure.report_envelope(
+        articles,
+        exec_summary_source=exec_summary_source if executive_summary else None,
+    )
+
     return {
         "week_label": week_label,
         "generated_at": now.strftime("%Y-%m-%d %H:%M UTC"),
@@ -197,6 +213,8 @@ def build_conflict_context(
         "container_watch": container_watch,
         "sources_consulted": sources_consulted,
         "logo_src": _load_logo_data_url(),
+        "disclosure": disclosure.template_block(env),
+        "ai_envelope": env,
     }
 
 
@@ -301,7 +319,7 @@ async def run_conflict_pipeline(
         pdf_path = html_path.with_suffix(".pdf")
         try:
             from agent.composer import render_pdf
-            await render_pdf(html_path, pdf_path)
+            await render_pdf(html_path, pdf_path, ai_envelope=context.get("ai_envelope"))
         except Exception as exc:
             logger.error("PDF generation failed: %s", exc)
             pdf_path = None

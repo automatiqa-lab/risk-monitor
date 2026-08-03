@@ -77,7 +77,9 @@ class CongestionAgent(BaseAgent):
     ) -> tuple[List[Article], str]:
         settings_wrapper = {"llm": config["agent"].get("llm", {})}
         summarized = summarize_all(articles, settings_wrapper)
-        exec_summary = generate_executive_summary(summarized)
+        exec_summary, self.exec_summary_source = generate_executive_summary(
+            summarized, return_source=True
+        )
         return summarized, exec_summary
 
     def _classify_severity(self, article: Article, config: Dict[str, Any]) -> str:
@@ -100,7 +102,7 @@ class CongestionAgent(BaseAgent):
         )
         from pptx.enum.text import PP_ALIGN
 
-        prs = create_presentation()
+        prs = create_presentation(disclosure=self.disclosure_envelope(articles))
         ports = config["agent"].get("ports", [])
 
         critical = [a for a in articles if self._classify_severity(a, config) == "critical"]

@@ -9,10 +9,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 # Jinja2Templates replaced with direct Environment to avoid cache key bug
 
+from shared import disclosure
 from web.database import (
     init_db, get_db, db_session,
     get_recent_articles, get_latest_metrics, get_all_module_status,
@@ -68,6 +69,25 @@ def _row_to_dict(row):
     d = dict(row)
     # Ensure all values are JSON-safe primitives
     return {k: (str(v) if not isinstance(v, (str, int, float, type(None))) else v) for k, v in d.items()}
+
+
+def _page_disclosure(*item_groups):
+    """Art. 50 marking block for a dashboard page.
+
+    The dashboard pipeline (run_for_dashboard) skips the LLM, so on a stock
+    install every row is 'scraped' and this returns an empty block - no meta
+    tags, no chips. That is the point: the marking appears if and only if a
+    model actually wrote something on the page.
+
+    The report footer sentence is dropped here on purpose. It talks about an
+    executive summary and article summaries, which is accurate on a briefing and
+    wrong on a dashboard. The per-row chip is the human-readable channel on these
+    pages; the meta tags are the machine-readable one.
+    """
+    items = [item for group in item_groups for item in (group or [])]
+    block = disclosure.template_block(disclosure.report_envelope(items))
+    block["footer"] = ""
+    return block
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -183,6 +203,7 @@ async def dashboard(request: Request):
         port_vessel_data=port_vessel_data,
         carrier_chart=carrier_chart,
         region_chart=region_chart,
+        disclosure=_page_disclosure(),
         last_update=datetime.now(timezone.utc).strftime("%d %b %Y, %H:%M UTC"),
     )
     return HTMLResponse(content=html)
@@ -273,6 +294,7 @@ async def region_detail_view(region_key: str, module: str = None):
         overall_status=overall,
         dimensions=dimensions,
         articles=articles,
+        disclosure=_page_disclosure(articles),
         filter_module=module,
         active_nav="",
         last_update=datetime.now(timezone.utc).strftime("%d %b %Y, %H:%M UTC"),
@@ -345,6 +367,7 @@ async def carrier_detail_view(carrier_key: str):
         advisory_url=cfg.get("advisory_url", ""),
         articles=article_dicts,
         advisories=advisory_dicts,
+        disclosure=_page_disclosure(article_dicts, advisory_dicts),
         total_signals=total,
         critical_count=critical,
         regions_affected=len(regions_set),
@@ -445,6 +468,7 @@ async def module_detail_view(module: str, request: Request):
         subtitle=cfg["subtitle"],
         active_nav=module,
         articles=[_row_to_dict(a) for a in articles],
+        disclosure=_page_disclosure([_row_to_dict(a) for a in articles]),
         metrics=[_row_to_dict(m) for m in metrics],
         alerts=[_row_to_dict(a) for a in alerts],
         status=_row_to_dict(status_row) if status_row else None,
@@ -471,15 +495,28 @@ async def api_status():
 
 @app.get("/api/modules/{module}")
 async def api_module(module: str):
-    """Get data for a specific module."""
+    """Get data for a specific module.
+
+    Carries AI-derived text, so it answers with the disclosure envelope and the
+    X-AI-Generated header when any row was model-written. Every row also carries
+    its own summary_source, so a consumer can mark per item rather than
+    labelling the whole payload.
+    """
     with db_session() as db:
         articles = get_recent_articles(db, module=module, limit=30)
         metrics = get_latest_metrics(db, module=module)
-    return {
-        "module": module,
-        "articles": [dict(a) for a in articles],
-        "metrics": [dict(m) for m in metrics],
-    }
+
+    rows = [dict(a) for a in articles]
+    env = disclosure.report_envelope(rows)
+    payload = disclosure.mark_json(
+        {
+            "module": module,
+            "articles": rows,
+            "metrics": [dict(m) for m in metrics],
+        },
+        env,
+    )
+    return JSONResponse(content=payload, headers=disclosure.http_headers(env))
 
 
 @app.get("/api/alerts")
@@ -500,10 +537,19 @@ async def api_metrics(module: str = None):
 
 @app.get("/api/articles")
 async def api_articles(module: str = None, limit: int = 30):
-    """Recent articles."""
+    """Recent articles.
+
+    Same marking contract as /api/modules/{module}: an ai_generated envelope and
+    an X-AI-Generated header when, and only when, at least one summary in the
+    response was written by a model.
+    """
     with db_session() as db:
         articles = get_recent_articles(db, module=module, limit=limit)
-    return {"articles": [dict(a) for a in articles]}
+
+    rows = [dict(a) for a in articles]
+    env = disclosure.report_envelope(rows)
+    payload = disclosure.mark_json({"articles": rows}, env)
+    return JSONResponse(content=payload, headers=disclosure.http_headers(env))
 
 
 @app.post("/api/scrape")

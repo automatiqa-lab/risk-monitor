@@ -96,7 +96,9 @@ class OilNewsAgent(BaseAgent):
         # Uses shared summarizer with global LLM settings
         settings_wrapper = {"llm": config["agent"].get("llm", {})}
         summarized = summarize_all(articles, settings_wrapper)
-        exec_summary = generate_executive_summary(summarized)
+        exec_summary, self.exec_summary_source = generate_executive_summary(
+            summarized, return_source=True
+        )
         return summarized, exec_summary
 
     def compose(
@@ -110,7 +112,7 @@ class OilNewsAgent(BaseAgent):
             WHITE, RED_ALERT, AMBER, STABLE_GRN,
         )
 
-        prs = create_presentation()
+        prs = create_presentation(disclosure=self.disclosure_envelope(articles))
 
         # ── Slide 1: Title + KPI Dashboard ───────────────────────────────
         s1 = add_blank_slide(prs)

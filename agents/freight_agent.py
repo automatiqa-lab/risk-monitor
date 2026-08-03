@@ -103,18 +103,30 @@ class FreightNewsAgent(BaseAgent):
         self, articles: List[Article], config: Dict[str, Any]
     ) -> tuple[List[Article], str]:
         summarized = summarize_all(articles, config["settings"])
-        exec_summary = load_weekly_briefing() or generate_executive_summary(summarized)
+
+        # A hand-written briefing from input/ is the author's own text and is not
+        # marked as AI-generated. Only the generated one is. Recorded here, at the
+        # point the text is chosen, because compose() cannot tell them apart.
+        manual_briefing = load_weekly_briefing()
+        if manual_briefing:
+            exec_summary, self.exec_summary_source = manual_briefing, "scraped"
+        else:
+            exec_summary, self.exec_summary_source = generate_executive_summary(
+                summarized, return_source=True
+            )
         return summarized, exec_summary
 
     def compose(
         self, articles: List[Article], exec_summary: str, config: Dict[str, Any]
     ) -> Dict[str, Any]:
         context = build_template_context(
-            articles, exec_summary, config["regions"], config["sources"], config["settings"]
+            articles, exec_summary, config["regions"], config["sources"], config["settings"],
+            exec_summary_source=getattr(self, "exec_summary_source", "model"),
         )
         return {
             "html": render_html(context),
             "md": render_markdown(context),
+            "ai_envelope": context.get("ai_envelope"),
         }
 
     def save(self, artifacts: Dict[str, Any], config: Dict[str, Any]) -> List[Path]:
@@ -128,7 +140,9 @@ class FreightNewsAgent(BaseAgent):
         pdf_path = html_path.with_suffix(".pdf")
         try:
             import asyncio
-            asyncio.get_event_loop().run_until_complete(render_pdf(html_path, pdf_path))
+            asyncio.get_event_loop().run_until_complete(
+                render_pdf(html_path, pdf_path, ai_envelope=artifacts.get("ai_envelope"))
+            )
             paths.append(pdf_path)
         except Exception as exc:
             self.logger.error("PDF generation failed: %s", exc)
