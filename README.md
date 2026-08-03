@@ -99,6 +99,8 @@ templates/  Jinja2 templates for the freight HTML/Markdown reports
 tests/      pytest suite
 ```
 
+Each directory carries its own `README.md` with what lives there and why.
+
 ## EU AI Act
 
 Operations Risk Monitor writes summaries with a language model, so its output carries transparency
