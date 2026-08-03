@@ -16,4 +16,5 @@ keywords:
   - litellm
   - ocean-freight
   - python
-date-released: 2026-06-26
+version: 0.1.0
+date-released: 2026-08-03
