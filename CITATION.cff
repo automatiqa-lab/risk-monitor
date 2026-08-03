@@ -7,7 +7,7 @@ authors:
   - family-names: Sidorecs
     given-names: Aleks
 repository-code: "https://github.com/automatiqa-lab/risk-monitor"
-url: "https://www.automati.qa/risk-monitor/"
+url: "https://www.automatiqa.io/risk-monitor/"
 license: MIT
 keywords:
   - multi-agent

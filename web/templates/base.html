@@ -4,6 +4,9 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>{% block title %}Operations Risk Monitor{% endblock %}</title>
+{# EU AI Act Art. 50(2) marking. The dashboard pipeline skips the LLM, so most
+   pages carry no model-written text and render nothing here. #}
+{% if disclosure and disclosure.html_meta %}{{ disclosure.html_meta | safe }}{% endif %}
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -68,6 +71,11 @@
   .bg-red { background: var(--red); } .bg-amber { background: var(--amber); } .bg-green { background: var(--green); } .bg-olive { background: var(--olive); }
 
   @media (max-width: 1200px) { .two-col { grid-template-columns: 1fr; } .kpi-row { grid-template-columns: repeat(3, 1fr); } }
+  /* Provenance chip. Shown only on rows a model actually wrote - the dashboard
+     pipeline skips the LLM, so on a stock install it never appears. */
+  .ai-chip { display: inline-block; margin: 2px 0 6px; font-size: 9px; letter-spacing: 0.06em;
+    text-transform: uppercase; font-weight: 700; padding: 1px 6px; border-radius: 3px;
+    background: var(--olive-bg); color: var(--green); border: 1px solid var(--vf-border); }
   {% block extra_css %}{% endblock %}
 </style>
 </head>
@@ -94,6 +102,12 @@
 
 <div class="container">
   {% block content %}{% endblock %}
+
+  {% if disclosure and disclosure.footer %}
+  <div class="ai-disclosure" style="margin-top:24px;padding:10px 12px;border:1px solid var(--vf-border);border-radius:4px;background:var(--vf-cream);font-size:11px;line-height:1.55;color:var(--vf-text-muted);">
+    {{ disclosure.footer }}
+  </div>
+  {% endif %}
 
   <div class="footer">
     <span>Operations Risk Monitor</span>

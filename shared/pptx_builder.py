@@ -5,6 +5,8 @@ every agent's slide deck looks the same.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any, Mapping, Optional
+
 from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
@@ -34,11 +36,23 @@ SLIDE_HEIGHT = Inches(7.5)
 
 # ── Factory ──────────────────────────────────────────────────────────────────
 
-def create_presentation() -> Presentation:
-    """Create a new branded Presentation at standard 16:9 dimensions."""
+def create_presentation(disclosure: Optional[Mapping[str, Any]] = None) -> Presentation:
+    """Create a new branded Presentation at standard 16:9 dimensions.
+
+    Every deck in the project is built here, so this is the one place the EU AI
+    Act Art. 50 marking has to be applied for all of them. Pass the envelope from
+    ``BaseAgent.disclosure_envelope()``; it lands in the PPTX core properties,
+    which survive save and reopen. None means the deck contains no model-written
+    text and gets no marking, which is the truthful outcome, not an oversight.
+    """
     prs = Presentation()
     prs.slide_width = SLIDE_WIDTH
     prs.slide_height = SLIDE_HEIGHT
+
+    if disclosure is not None:
+        from shared.disclosure import mark_pptx
+        mark_pptx(prs, disclosure)
+
     return prs
 
 
