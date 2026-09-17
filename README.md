@@ -135,3 +135,5 @@ MIT. See [LICENSE](LICENSE). Attribution and upstream model providers: [NOTICE](
 ---
 
 Automatiqa Lab by Aleks Sidorecs · aleks@automatiqa.io
+
+The argument these projects sit under: [The Intelligent Orchestration Manifesto](https://www.automatiqa.io/manifesto/).
