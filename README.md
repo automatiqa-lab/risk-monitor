@@ -2,7 +2,7 @@
 
 A multi-agent system that watches operational risk across ocean freight, fuel, labour, weather, and geopolitics, then turns what it finds into briefings you can actually use. It runs two ways: a CLI that produces weekly reports (HTML, Markdown, PDF, PPTX), and a live dashboard that refreshes itself every few hours.
 
-Part of [Automatiqa Lab](https://www.automatiqa.io/risk-monitor/) - open-source experiments where operations meet the algorithm.
+Part of [Automatiqa Lab](https://www.automatiqa.io) - open-source experiments where operations meet the algorithm. Project page: [automatiqa.io/risk-monitor](https://www.automatiqa.io/risk-monitor/).
 
 The model behind the summaries is yours to choose. Everything routes through LiteLLM, so the same code runs on Anthropic, OpenAI, or a local Ollama model. You change one line in `config/settings.yaml` and set the matching API key.
 
