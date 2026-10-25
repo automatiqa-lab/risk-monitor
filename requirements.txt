@@ -1,7 +1,7 @@
 # Operations Risk Monitor - Python dependencies
 
 # Model-agnostic LLM gateway (Anthropic, OpenAI, Ollama, ... via one call)
-litellm>=1.40.0
+litellm>=1.106.2
 
 # HTTP client for fetching pages and RSS
 httpx>=0.27.0
