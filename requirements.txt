@@ -20,7 +20,7 @@ playwright>=1.44.0
 python-docx>=1.1.0
 
 # PDF text extraction (for EML attachment parsing)
-PyMuPDF>=1.24.0
+PyMuPDF>=2.0
 
 # Excel parsing (for carrier advisory XLSX attachments)
 openpyxl>=3.1.0
