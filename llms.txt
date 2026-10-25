@@ -16,4 +16,3 @@ Output is marked under EU AI Act Article 50. Two kinds of text in a report are m
 
 ## More
 - [Automatiqa Lab](https://www.automatiqa.io/risk-monitor/): the project page
-- [Build logs](https://www.automatiqa.io/tag/build-log/): the thinking behind it
